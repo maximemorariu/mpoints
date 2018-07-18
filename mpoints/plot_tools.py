@@ -9,7 +9,8 @@ import bisect
 
 def qq_plot(residuals, shape, path=os.getcwd(), fig_name='qq_plot.pdf', log=False, q_min=0.01, q_max=0.99,
             number_of_quantiles=50, title=None, labels=None, model_labels=None, palette=None, figsize=(12, 6),
-            size_labels=16, size_ticks=14, bottom=0.12, top=0.93, left=0.08, right=0.92, savefig=False, leg_pos=0):
+            size_labels=16, size_ticks=14, legend_size=16, bottom=0.12, top=0.93, left=0.08, right=0.92, savefig=False,
+            leg_pos=0):
     """
 
     :param residuals:
@@ -78,7 +79,7 @@ def qq_plot(residuals, shape, path=os.getcwd(), fig_name='qq_plot.pdf', log=Fals
                             axes.plot(quantiles_theoretical, quantiles_theoretical, color='k', linewidth=0.8,
                                       ls='--')
                     if n == leg_pos :  # add legend in the specified subplot
-                        legend = axes.legend(frameon=1, fontsize=size_labels)
+                        legend = axes.legend(frameon=1, fontsize=legend_size)
                         legend.get_frame().set_facecolor('white')
                 if log:
                     axes.set_xscale('log')
@@ -95,8 +96,8 @@ def qq_plot(residuals, shape, path=os.getcwd(), fig_name='qq_plot.pdf', log=Fals
         plt.savefig(entire_path)
 
 def correlogram(residuals, path=os.getcwd(), fig_name='correlogram.pdf', title=None, labels=None, model_labels=None,
-                palette=None, n_lags=50, figsize=(8, 6), size_labels=16, size_ticks=14, bottom=None, top=None,
-                left=None, right=None,savefig=True):
+                palette=None, n_lags=50, figsize=(8, 6), size_labels=16, size_ticks=14, size_legend=16, bottom=None,
+                top=None, left=None, right=None,savefig=True):
     """
 
     :param residuals:
@@ -154,7 +155,7 @@ def correlogram(residuals, path=os.getcwd(), fig_name='correlogram.pdf', title=N
                     axes.plot(ccf[0:n_lags + 1], color=palette[m], label=model_labels[m])
                     axes.set_xlim(xmin=0, xmax=n_lags)
                 if i+j==0:  # only add legend in the first subplot
-                    legend = axes.legend(frameon=1, fontsize=size_labels)
+                    legend = axes.legend(frameon=1, fontsize=size_legend)
                     legend.get_frame().set_facecolor('white')
             if labels != None:
                 axes.set_title(labels[i] + r'$\rightarrow$' + labels[j], fontsize=size_labels)
@@ -166,225 +167,6 @@ def correlogram(residuals, path=os.getcwd(), fig_name='correlogram.pdf', title=N
     if savefig:
         entire_path = os.path.join(path, fig_name)
         plt.savefig(entire_path)
-
-def plot_histogram_of_3d_matrix(path, fig_name, data, labels=None, title=None, superposed=False,
-                    n_bins=10, kernel_smoothing=False, display_means=False, true_means=None, fig_size=(8, 12)):
-    """
-
-    :param path:
-    :param fig_name:
-    :param data:
-    :param labels:
-    :param title:
-    :param superposed:
-    :param n_bins:
-    :param kernel_smoothing:
-    :param display_means:
-    :param true_means:
-    :return:
-    """
-    data_shape = data.shape
-    seaborn.set()
-    palette = seaborn.color_palette('husl', data_shape[1])
-
-    'Plot - no superposition case'
-    if not superposed:
-        h_size = data_shape[2]
-        v_size = data_shape[0] * data_shape[1]
-        f, fig_array = plt.subplots(v_size, h_size, figsize=fig_size)
-        if title!=None:
-            f.suptitle(title)
-        for x in range(data_shape[1]):
-            for e1 in range(data_shape[0]):
-                for e2 in range(data_shape[2]):
-                    if kernel_smoothing:
-                        seaborn.distplot(data[e1, x, e2, :], hist=False, color=palette[x],
-                                         kde_kws={"shade": True}, ax=fig_array[e1 + data_shape[0]*x, e2])
-                    else:
-                        fig_array[e1 + data_shape[0]*x, e2].hist(data[e1, x, e2, :], bins=n_bins, color=palette[x])
-                    if display_means:
-                        m = np.mean(data[e1, x, e2, :])
-                        fig_array[e1 + data_shape[0] * x, e2].axvline(x=m, color='k', linewidth=1)
-                        if np.shape(true_means)!=():
-                            m = true_means[e1, x, e2]
-                            fig_array[e1 + data_shape[0] * x, e2].axvline(x=m, color='k', ls='--', linewidth=1)
-                    if labels!=None:
-                        fig_array[e1 + data_shape[0]*x, e2].set_title(labels[e1][x][e2])
-        plt.tight_layout()
-        plt.subplots_adjust(bottom=0.05, top=0.9)
-        entire_path = os.path.join(path, fig_name)
-        plt.savefig(entire_path)
-
-    'Plot - superposition case'
-    if superposed:
-        h_size = data_shape[2]
-        v_size = data_shape[0]
-        f, fig_array = plt.subplots(v_size, h_size, figsize=fig_size)
-        if title!=None:
-            f.suptitle(title)
-        for e1 in range(data_shape[0]):
-            for e2 in range(data_shape[2]):
-                ax = fig_array[e1, e2]
-                ax.set_autoscaley_on(True)
-                for x in range(data_shape[1]):
-                    label = None
-                    if labels != None:
-                        label = labels[e1][x][e2]
-                    if kernel_smoothing:
-                        ax = seaborn.distplot(data[e1, x, e2, :], hist=False, color=palette[x],
-                                         kde_kws={"shade": True}, ax=ax, label=label)
-                    else:
-                        ax.hist(data[e1, x, e2, :], bins=n_bins, color=palette[x], label=label)
-                    if display_means:
-                        m = np.mean(data[e1, x, e2, :])
-                        ax.axvline(x=m, color=palette[x], linewidth=1)
-                        if np.shape(true_means) != ():
-                            m = true_means[e1, x, e2]
-                            ax.axvline(x=m, color=palette[x], ls='--', linewidth=1)
-                    ax.set_autoscaley_on(True)
-                if labels != None:
-                        plt.legend()
-        plt.tight_layout()
-        plt.subplots_adjust(bottom=0.05, top=0.9)
-        entire_path = os.path.join(path, fig_name)
-        plt.savefig(entire_path)
-
-def plot_histogram_of_vector(path, fig_name, data, shape, labels=None, title=None, n_bins=10, kernel_smoothing=False,
-                             display_means=False, true_means=None, fig_size=(8, 6)):
-    """
-
-    :param path:
-    :param fig_name:
-    :param data:
-    :param shape:
-    :param labels:
-    :param title:
-    :param n_bins:
-    :param kernel_smoothing:
-    :param display_means:
-    :param true_means:
-    :return:
-    """
-    dim = data.shape[0]
-    v_size = shape[0]
-    h_size = shape[1]
-    seaborn.set()
-    palette = seaborn.color_palette('husl', dim)
-    f, fig_array = plt.subplots(v_size, h_size, figsize=fig_size)
-    if title != None:
-        f.suptitle(title)
-    for i in range(v_size):
-        for j in range(h_size):
-            n = j + h_size*i
-            if n < dim:  # the shape of the subpots might be bigger than dim, i.e. 3 plots on a 2x2 grid.
-                axes = None
-                if v_size==1 and h_size==1:
-                    axes = fig_array
-                elif v_size==1:
-                    axes = fig_array[j]
-                elif h_size==1:
-                    axes = fig_array[i]
-                else:
-                    axes = fig_array[i, j]
-                if kernel_smoothing:
-                    seaborn.distplot(data[n, :], hist=False, color=palette[n],
-                                     kde_kws={"shade": True}, ax=axes)
-                else:
-                    axes.hist(data[n, :], bins=n_bins, color=palette[n])
-                if display_means:
-                    m = np.mean(data[n, :])
-                    axes.axvline(x=m, color='k', linewidth=1)
-                    if np.shape(true_means)!=():
-                        m = true_means[n]
-                        axes.axvline(x=m, color='k', ls='--', linewidth=1)
-                if labels!=None:
-                    axes.set_title(labels[n])
-    plt.tight_layout()
-    plt.subplots_adjust(bottom=0.1, top=0.85)
-    entire_path = os.path.join(path, fig_name)
-    plt.savefig(entire_path)
-
-def distribution_in_time(times, data, alpha_low=5, alpha_up=95, color='b', ax=None):
-    means = np.zeros(len(times))
-    lower_q = np.zeros(len(times))
-    upper_q = np.zeros(len(times))
-    for i in range(len(times)):
-        means[i] = np.mean(data[i, :])
-        lower_q[i] = np.percentile(data[i, :], alpha_low)
-        upper_q[i] = np.percentile(data[i, :], alpha_up)
-    'Fill area between lower and upper quantiles'
-    polygon_x = list(times) + list(reversed(list(times)))
-    polygon_y = list(upper_q) + list(reversed(list(lower_q)))
-    if ax==None:
-        plt.fill(polygon_x, polygon_y, alpha=0.2, color=color)
-        plt.plot(times, means, color=color)
-    else:
-        ax.fill(polygon_x, polygon_y, alpha=0.2, color=color)
-        ax.plot(times, means, color=color)
-
-def distribution_in_time_of_3d_matrix(path, fig_name, times, data, labels=None, xlabel=None, title=None,
-                                      true_means=None, alpha_low=5, alpha_up=95):
-    data_shape = data.shape
-    seaborn.set()
-    palette = seaborn.color_palette('husl', data_shape[1])
-
-    h_size = data_shape[2]
-    v_size = data_shape[0] * data_shape[1]
-    f, fig_array = plt.subplots(v_size, h_size, figsize=(8, 12), sharex='col')
-    if title != None:
-        f.suptitle(title)
-    for x in range(data_shape[1]):
-        for e1 in range(data_shape[0]):
-            for e2 in range(data_shape[2]):
-                ax = fig_array[e1 + data_shape[0] * x, e2]
-                distribution_in_time(times, data[e1, x, e2, :, :], alpha_low, alpha_up, color=palette[x], ax=ax)
-                if np.shape(true_means) != ():
-                    m = true_means[e1, x, e2, :]
-                    ax.plot(times, m, color='k', linewidth=0.75, ls='--')
-                if labels != None:
-                    ax.set_title(labels[e1][x][e2])
-    if xlabel!=None:
-        f.text(0.514, 0.01, xlabel, ha='center')
-    plt.tight_layout()
-    plt.subplots_adjust(bottom=0.05, top=0.92)
-    entire_path = os.path.join(path, fig_name)
-    plt.savefig(entire_path)
-
-def distribution_in_time_of_vector(path, fig_name, times, data, shape, labels=None, xlabel=None, title=None,
-                                   true_means=None, alpha_low=5, alpha_up=95):
-    dim = data.shape[0]
-    v_size = shape[0]
-    h_size = shape[1]
-    seaborn.set()
-    palette = seaborn.color_palette('husl', dim)
-    f, fig_array = plt.subplots(v_size, h_size, sharex='col')
-    if title != None:
-        f.suptitle(title)
-    for i in range(v_size):
-        for j in range(h_size):
-            n = j + h_size * i
-            if n < dim:  # the shape of the subplots might be bigger than dim, i.e. 3 plots on a 2x2 grid.
-                axes = None
-                if v_size == 1 and h_size == 1:
-                    axes = fig_array
-                elif v_size == 1:
-                    axes = fig_array[j]
-                elif h_size == 1:
-                    axes = fig_array[i]
-                else:
-                    axes = fig_array[i, j]
-                distribution_in_time(times, data[n, :, :], alpha_low, alpha_up, color=palette[n], ax=axes)
-                if np.shape(true_means) != ():
-                    m = true_means[n, :]
-                    axes.plot(times, m, color='k', linewidth=0.75, ls='--')
-                if labels != None:
-                    axes.set_title(labels[n])
-    if xlabel!=None:
-        f.text(0.514, 0.02, xlabel, ha='center')
-    plt.tight_layout()
-    plt.subplots_adjust(bottom=0.1, top=0.85)
-    entire_path = os.path.join(path, fig_name)
-    plt.savefig(entire_path)
 
 def transition_probabilities(probabilities, shape=None, path=os.getcwd(), fig_name='transition_probabilities.pdf',
                              events_labels=None, states_labels=None, title=None, color_map=None, fig_size=(12, 6),
@@ -499,7 +281,7 @@ def discrete_distribution(probabilities, path=os.getcwd(), fig_name='distributio
 
 def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, states_labels=None, path=os.getcwd(),
                 fig_name='kernels.pdf', title=None, palette=None, figsize=(9, 7), size_labels=16,
-                size_values=14, bottom=None, top=None, left=None, right=None, savefig=False,
+                size_values=14, size_legend=16, bottom=None, top=None, left=None, right=None, savefig=False,
                 fig_array=None, fig=None,
                 tmin=None, tmax=None, npoints=500, ymax=None, alpha=1, legend_pos=0):
     s = np.shape(impact_coefficients)
@@ -547,7 +329,7 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
                 axes.set_title(events_labels[e1] + r' $\rightarrow$ ' + events_labels[e2], fontsize=size_labels)
             pos = e2 + number_of_event_types*e1
             if pos == legend_pos and np.shape(states_labels) != () :
-                legend = axes.legend(frameon=1, fontsize=size_labels)
+                legend = axes.legend(frameon=1, fontsize=size_legend)
                 legend.get_frame().set_facecolor('white')
     if title != None:
         fig.suptitle(title, fontsize=size_labels)
@@ -560,7 +342,7 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
     return fig, fig_array
 
 def sample_path(times, events, states, model, time_start, time_end, color_palette=None, labelsize=16, ticksize=14,
-                num=1000, s=12, savefig=False, path='', fig_name='sample_path.pdf'):
+                legendsize=16, num=1000, s=12, savefig=False, path='', fig_name='sample_path.pdf'):
     if color_palette is None:
         color_palette = seaborn.color_palette('husl', n_colors=model.number_of_event_types)
     'Compute the intensities - this may require all the event times prior to start_time'
@@ -587,7 +369,7 @@ def sample_path(times, events, states, model, time_start, time_end, color_palett
     ax.set_ylim(ymin=0)
     ax.set_ylabel('Intensity', fontsize=labelsize)
     ax.set_xlabel('Time', fontsize=labelsize)
-    legend = ax.legend(frameon=1, fontsize=labelsize)
+    legend = ax.legend(frameon=1, fontsize=legendsize)
     legend.get_frame().set_facecolor('white')
     'Plot the state process and the events'
     ax = fig_array[0]
