@@ -36,7 +36,7 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
     :param right: float between 0 and 1, adjusts the right margin, see matplotlib subplots_adjust.
     :param savefig: boolean, set to True to save the figure.
     :param leg_pos: int, position of the legend in the array of figures.
-    :return: figure, array of figures.
+    :return: figure, array of figures (the two objects are returned).
     """
     quantile_levels = np.linspace(q_min, q_max, number_of_quantiles)
     quantiles_theoretical = np.zeros(number_of_quantiles)
@@ -136,7 +136,7 @@ def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labe
     :param left: float between 0 and 1, adjusts the left margin, see matplotlib subplots_adjust.
     :param right: float between 0 and 1, adjusts the right margin, see matplotlib subplots_adjust.
     :param savefig: boolean, set to True to save the figure.
-    :return:
+    :return: figure, array of figures (the two objects are returned).
     """
     # find number of models given and number of event types (dim)
     n_models = 1
@@ -196,6 +196,7 @@ def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labe
     if savefig:
         entire_path = os.path.join(path, fig_name)
         plt.savefig(entire_path)
+    return f, fig_array
 
 def transition_probabilities(probabilities, shape=None, path='', fig_name='transition_probabilities.pdf',
                              events_labels=None, states_labels=None, title=None, color_map=None, fig_size=(12, 6),
@@ -224,7 +225,7 @@ def transition_probabilities(probabilities, shape=None, path='', fig_name='trans
     :param hspace: float, vertical spacing between the subplots, see matplotlib subplots_adjust.
     :param savefig: boolean, set to True to save the figure.
     :param usetex: boolean, set to True if matplolib figure is rendered with TeX.
-    :return:
+    :return: figure, array of figures (the two objects are returned).
     """
     if color_map == None:
         color_map = seaborn.cubehelix_palette(as_cmap=True, reverse=False, start=0.5, rot=-.75)
@@ -289,10 +290,32 @@ def transition_probabilities(probabilities, shape=None, path='', fig_name='trans
     if savefig:
         entire_path = os.path.join(path, fig_name)
         plt.savefig(entire_path)
+    return f, fig_array
 
 def discrete_distribution(probabilities, path=os.getcwd(), fig_name='distribution_events_states.pdf', v_labels=None,
                           h_labels=None, title=None, color_map=None, figsize=(12, 6), size_labels=16, size_values=14,
                           bottom=None, top=None, left=None, right=None, savefig=False, usetex=False):
+    """
+    Annotated heatmap of a given discrete distribution with 2 dimensions.
+
+    :param probabilities: array with 2 dimensions, the 2D discrete distribution.
+    :param path: string, where the figure is saved.
+    :param fig_name: string, name of the file.
+    :param v_labels: list of strings, labels for the first dimension (vertical).
+    :param h_labels: list of strings, labels for the second dimension (horizontal).
+    :param title: string, suptitle.
+    :param color_map: color map for the heatmap, see seaborn documentation.
+    :param figsize: tuple (width, height).
+    :param size_labels: int, fontsize of labels.
+    :param size_values: int, fontsize of the annotations on top of the heatmap.
+    :param bottom: float between 0 and 1, adjusts the bottom margin, see matplotlib subplots_adjust.
+    :param top: float between 0 and 1, adjusts the top margin, see matplotlib subplots_adjust.
+    :param left: float between 0 and 1, adjusts the left margin, see matplotlib subplots_adjust.
+    :param right: float between 0 and 1, adjusts the right margin, see matplotlib subplots_adjust.
+    :param savefig: boolean, set to True to save the figure.
+    :param usetex: boolean, set to True if matplolib figure is rendered with TeX.
+    :return: figure.
+    """
     if color_map == None:
         color_map = seaborn.cubehelix_palette(as_cmap=True, reverse=False, start=0.5, rot=-.75)
     v_size = np.shape(probabilities)[0]
@@ -318,7 +341,7 @@ def discrete_distribution(probabilities, path=os.getcwd(), fig_name='distributio
                     annot[x1, x2] = r'$' + a + r'$\%'
                 else:
                     annot[x1, x2] = a + r'%'
-    plt.figure(figsize=figsize)
+    f = plt.figure(figsize=figsize)
     ax = seaborn.heatmap(probabilities, xticklabels=h_labels, yticklabels=v_labels, annot=annot, cbar=False,
                     cmap=color_map, fmt='s', square=True, annot_kws={'size': size_values})
     ax.tick_params(axis='both', which='major', labelsize=size_labels)  # font size for tick labels
@@ -331,6 +354,7 @@ def discrete_distribution(probabilities, path=os.getcwd(), fig_name='distributio
     if savefig:
         entire_path = os.path.join(path, fig_name)
         plt.savefig(entire_path)
+    return f
 
 def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, states_labels=None, path=os.getcwd(),
                 fig_name='kernels.pdf', title=None, palette=None, figsize=(9, 7), size_labels=16,
