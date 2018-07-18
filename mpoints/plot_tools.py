@@ -25,7 +25,7 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
     :param title: string, suptitle.
     :param labels: list of strings, labels of the event types.
     :param model_labels: list of strings, names of the different considered models.
-    :param palette: color palette, one color per model.
+    :param palette: color palette (list of colors), one color per model.
     :param figsize: tuple (width, height).
     :param size_labels: int, fontsize of labels.
     :param size_ticks: int, fontsize of tick labels.
@@ -117,14 +117,25 @@ def correlogram(residuals, path=os.getcwd(), fig_name='correlogram.pdf', title=N
                 palette=None, n_lags=50, figsize=(8, 6), size_labels=16, size_ticks=14, size_legend=16, bottom=None,
                 top=None, left=None, right=None,savefig=True):
     """
+    Correlogram of residuals.
 
-    :param residuals:
-    :param path:
-    :param fig_name:
-    :param title:
-    :param labels:
-    :param model_labels:
-    :param palette:
+    :param residuals: list of lists (one list of residuals per event type) or list of lists of lists when multiple models are compared (one list of lists per model).
+    :param path: string, where the figure is saved.
+    :param fig_name: string, name of the file.
+    :param title: string, suptitle.
+    :param labels: list of strings, labels of the event types.
+    :param model_labels: list of strings, names of the different considered models.
+    :param palette: color palette (list of colors), one color per model.
+    :param n_lags: int, number of lags to plot.
+    :param figsize: tuple (width, height).
+    :param size_labels: int, fontsize of labels.
+    :param size_ticks: int, fontsize of tick labels.
+    :param size_legend: int, fontsize of the legend.
+    :param bottom: float between 0 and 1, adjusts the bottom margin, see matplotlib subplots_adjust.
+    :param top: float between 0 and 1, adjusts the top margin, see matplotlib subplots_adjust.
+    :param left: float between 0 and 1, adjusts the left margin, see matplotlib subplots_adjust.
+    :param right: float between 0 and 1, adjusts the right margin, see matplotlib subplots_adjust.
+    :param savefig: boolean, set to True to save the figure.
     :return:
     """
     # find number of models given and number of event types (dim)
