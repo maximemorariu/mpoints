@@ -7,19 +7,36 @@ from matplotlib.colors import ListedColormap
 import copy
 import bisect
 
-def qq_plot(residuals, shape, path=os.getcwd(), fig_name='qq_plot.pdf', log=False, q_min=0.01, q_max=0.99,
-            number_of_quantiles=50, title=None, labels=None, model_labels=None, palette=None, figsize=(12, 6),
+def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q_min=0.01, q_max=0.99,
+            number_of_quantiles=100, title=None, labels=None, model_labels=None, palette=None, figsize=(12, 6),
             size_labels=16, size_ticks=14, legend_size=16, bottom=0.12, top=0.93, left=0.08, right=0.92, savefig=False,
             leg_pos=0):
     """
+    Qq-plot of residuals.
 
-    :param residuals:
-    :param path:
-    :param log:
-    :param q_min:
-    :param q_max:
-    :param number_of_quantiles:
-    :return:
+    :param residuals: list of lists (one list of residuals per event type) or list of lists of lists when multiple models are compared (one list of lists per model).
+    :param shape: 2D-tuple (number of columns, number of rows), shape of the array of figures.
+    :param path: string, where the figure is saved.
+    :param fig_name: string, name of the file.
+    :param log: boolean, set to True for qq-plots with log-scale.
+    :param q_min: float, smallest quantile to plot (e.g., 0.01 for 1%).
+    :param q_max: float, largest quantile to plot.
+    :param number_of_quantiles: int.
+    :param title: string, suptitle.
+    :param labels: list of strings, labels of the event types.
+    :param model_labels: list of strings, names of the different considered models.
+    :param palette: color palette, one color per model.
+    :param figsize: tuple (width, height).
+    :param size_labels: int, fontsize of labels.
+    :param size_ticks: int, fontsize of tick labels.
+    :param legend_size: int, fontsize of the legend.
+    :param bottom: float between 0 and 1, adjusts the bottom margin, see matplotlib subplots_adjust.
+    :param top: float between 0 and 1, adjusts the top margin, see matplotlib subplots_adjust.
+    :param left: float between 0 and 1, adjusts the left margin, see matplotlib subplots_adjust.
+    :param right: float between 0 and 1, adjusts the right margin, see matplotlib subplots_adjust.
+    :param savefig: boolean, set to True to save the figure.
+    :param leg_pos: int, position of the legend in the array of figures.
+    :return: figure, array of figures.
     """
     quantile_levels = np.linspace(q_min, q_max, number_of_quantiles)
     quantiles_theoretical = np.zeros(number_of_quantiles)
@@ -94,6 +111,7 @@ def qq_plot(residuals, shape, path=os.getcwd(), fig_name='qq_plot.pdf', log=Fals
     if savefig:
         entire_path = os.path.join(path, fig_name)
         plt.savefig(entire_path)
+    return f, fig_array
 
 def correlogram(residuals, path=os.getcwd(), fig_name='correlogram.pdf', title=None, labels=None, model_labels=None,
                 palette=None, n_lags=50, figsize=(8, 6), size_labels=16, size_ticks=14, size_legend=16, bottom=None,
