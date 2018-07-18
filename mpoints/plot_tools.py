@@ -113,7 +113,7 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
         plt.savefig(entire_path)
     return f, fig_array
 
-def correlogram(residuals, path=os.getcwd(), fig_name='correlogram.pdf', title=None, labels=None, model_labels=None,
+def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labels=None, model_labels=None,
                 palette=None, n_lags=50, figsize=(8, 6), size_labels=16, size_ticks=14, size_legend=16, bottom=None,
                 top=None, left=None, right=None,savefig=True):
     """
@@ -197,11 +197,35 @@ def correlogram(residuals, path=os.getcwd(), fig_name='correlogram.pdf', title=N
         entire_path = os.path.join(path, fig_name)
         plt.savefig(entire_path)
 
-def transition_probabilities(probabilities, shape=None, path=os.getcwd(), fig_name='transition_probabilities.pdf',
+def transition_probabilities(probabilities, shape=None, path='', fig_name='transition_probabilities.pdf',
                              events_labels=None, states_labels=None, title=None, color_map=None, fig_size=(12, 6),
                              size_labels=16, size_values=14, bottom=0.1, top=0.95, left=0.08, right=0.92,
                              wspace=0.2, hspace=0.2,
                              savefig=False, usetex=False):
+    """
+    Annotated heatmap of the transition probabilities of a state-dependent Hawkes process.
+
+    :param probabilities: array with 3 dimensions, the transition probabilities.
+    :param shape: 2D-tuple (number of columns, number of rows), shape of the array of figures.
+    :param path: string, where the figure is saved.
+    :param fig_name: string, name of the file.
+    :param events_labels: list of strings, labels of the event types.
+    :param states_labels: list of strings, labels of the states.
+    :param title: string, suptitle.
+    :param color_map: color map for the heatmap, see seaborn documentation.
+    :param fig_size: tuple (width, height).
+    :param size_labels: int, fontsize of labels.
+    :param size_values: int, fontsize of the annotations on top of the heatmap.
+    :param bottom: float between 0 and 1, adjusts the bottom margin, see matplotlib subplots_adjust.
+    :param top: float between 0 and 1, adjusts the top margin, see matplotlib subplots_adjust.
+    :param left: float between 0 and 1, adjusts the left margin, see matplotlib subplots_adjust.
+    :param right: float between 0 and 1, adjusts the right margin, see matplotlib subplots_adjust.
+    :param wspace: float, horizontal spacing between the subplots, see matplotlib subplots_adjust.
+    :param hspace: float, vertical spacing between the subplots, see matplotlib subplots_adjust.
+    :param savefig: boolean, set to True to save the figure.
+    :param usetex: boolean, set to True if matplolib figure is rendered with TeX.
+    :return:
+    """
     if color_map == None:
         color_map = seaborn.cubehelix_palette(as_cmap=True, reverse=False, start=0.5, rot=-.75)
     number_of_states = np.shape(probabilities)[0]
