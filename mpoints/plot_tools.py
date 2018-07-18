@@ -1,13 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
-import matplotlib
 import os
 import seaborn
 import statsmodels.tsa.stattools as stattools
+from matplotlib.colors import ListedColormap
+import copy
+import bisect
 
 def qq_plot(residuals, shape, path=os.getcwd(), fig_name='qq_plot.pdf', log=False, q_min=0.01, q_max=0.99,
             number_of_quantiles=50, title=None, labels=None, model_labels=None, palette=None, figsize=(12, 6),
-            size_labels=16, size_ticks=14, bottom=0.12, top=0.93, left=0.08, right=0.92, savefig=False):
+            size_labels=16, size_ticks=14, bottom=0.12, top=0.93, left=0.08, right=0.92, savefig=False, leg_pos=0):
     """
 
     :param residuals:
@@ -75,8 +77,8 @@ def qq_plot(residuals, shape, path=os.getcwd(), fig_name='qq_plot.pdf', log=Fals
                         if m == 0:
                             axes.plot(quantiles_theoretical, quantiles_theoretical, color='k', linewidth=0.8,
                                       ls='--')
-                    if i == 0 and j == h_size-1 :  # only add legend in the top-left subplot
-                        legend = axes.legend(frameon=1, fontsize=11)
+                    if n == leg_pos :  # add legend in the specified subplot
+                        legend = axes.legend(frameon=1, fontsize=size_labels)
                         legend.get_frame().set_facecolor('white')
                 if log:
                     axes.set_xscale('log')
@@ -556,3 +558,59 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
         entire_path = os.path.join(path, fig_name)
         plt.savefig(entire_path)
     return fig, fig_array
+
+def sample_path(times, events, states, model, time_start, time_end, color_palette=None, labelsize=16, ticksize=14,
+                num=1000, s=12, savefig=False, path='', fig_name='sample_path.pdf'):
+    if color_palette is None:
+        color_palette = seaborn.color_palette('husl', n_colors=model.number_of_event_types)
+    'Compute the intensities - this may require all the event times prior to start_time'
+    compute_times = np.linspace(time_start, time_end, num=num)
+    aggregated_times, intensities = model.intensities_of_events_at_times(compute_times, times, events, states)
+    'We can now discard the times outside the desired time period'
+    index_start = bisect.bisect_left(times, time_start)
+    index_end = bisect.bisect_right(times, time_end)
+    initial_state = 0
+    if index_start > 0:
+        initial_state = states[index_start-1]
+    times = copy.copy(times[index_start:index_end])
+    events = copy.copy(events[index_start:index_end])
+    states = copy.copy(states[index_start:index_end])
+    seaborn.set(style='darkgrid')
+    plt.figure()
+    f, fig_array = plt.subplots(2, 1, sharex='col')
+    'Plot the intensities'
+    ax = fig_array[1]
+    ax.tick_params(axis='both', which='major', labelsize=ticksize)
+    # intensity_max = intensities.max() * 1.01
+    for n in range(model.number_of_event_types):
+        ax.plot(aggregated_times, intensities[n], linewidth=1, color=color_palette[n], label=model.events_labels[n])
+    ax.set_ylim(ymin=0)
+    ax.set_ylabel('Intensity', fontsize=labelsize)
+    ax.set_xlabel('Time', fontsize=labelsize)
+    legend = ax.legend(frameon=1, fontsize=labelsize)
+    legend.get_frame().set_facecolor('white')
+    'Plot the state process and the events'
+    ax = fig_array[0]
+    ax.tick_params(axis='both', which='major', labelsize=ticksize)
+    # Plot the event times and types, one color per event type, y-coordinate corresponds to new state of the system
+    color_map = ListedColormap(color_palette)
+    ax.scatter(times, states, c=events, cmap=color_map, s=s, alpha=1, edgecolors='face',
+               zorder=10)
+    ax.set_xlim(xmin=time_start, xmax=time_end)
+    ax.set_ylim(ymin=-0.1, ymax=model.number_of_states - 0.9)
+    ax.set_yticks(range(model.number_of_states))
+    ax.set_yticklabels(model.states_labels, fontsize=ticksize)
+    ax.set_ylabel('State', fontsize=labelsize)
+    # Plot the state process
+    times.insert(0, time_start)
+    states.insert(0, initial_state)
+    times.append(time_end)
+    states.append(states[-1])  # these two appends are required to plot until `time_end'
+    ax.step(times, states, where='post', linewidth=1, color='grey', zorder=1)
+    # Save the figure
+    plt.tight_layout()
+    plt.subplots_adjust(left=0.1, right=0.9)
+    if savefig:
+        entire_path = os.path.join(path, fig_name)
+        plt.savefig(entire_path)
+    return f, fig_array
