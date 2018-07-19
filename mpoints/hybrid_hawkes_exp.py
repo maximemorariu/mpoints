@@ -755,74 +755,6 @@ class HybridHawkesExp:
         return base_rates, impact_coefficients, decay_coefficients
 
     @staticmethod
-    def random_choice(weights):
-        """
-        Returns a random integers in [0, len(weights)-1] with probabilities proportional to weights.
-        :param weights: [array]
-        :return: [int]
-        """
-        total = sum(weights)
-        random_uniform = np.random.uniform(0, total)
-        result = 0
-        done = False
-        cumulative_sum = weights[result]
-        if random_uniform <= cumulative_sum:
-            done = True
-        while not done:
-            result += 1
-            cumulative_sum += weights[result]
-            if random_uniform <= cumulative_sum:
-                done = True
-        return result
-
-    @staticmethod
-    def separate_event_times(times, events, number_of_event_types):
-        """
-
-        :param times:
-        :param events:
-        :param number_of_event_types:
-        :return:
-        """
-        separated_times = []
-        for n in range(number_of_event_types):
-            separated_times.append([])
-        for n in range(len(times)):
-            t = times[n]
-            e = events[n]
-            separated_times[e].append(t)
-        result = []
-        for n in range(number_of_event_types):
-            result.append(np.asarray(separated_times[n]))
-        return result
-
-    @staticmethod
-    def separate_event_times_with_cumulative_marks(times, events, states, number_of_event_types):
-        """
-
-        :param times:
-        :param events:
-        :param marks:
-        :param number_of_event_types:
-        :return:
-        """
-        separated_times = []
-        separated_marks = []
-        for n in range(number_of_event_types):
-            separated_times.append([])
-            separated_marks.append([])
-        for n in range(len(times)):
-            t = times[n]
-            e = events[n]
-            x = states[n]
-            separated_times[e].append(t)
-            separated_marks[e].append(x)
-        result = []
-        for n in range(number_of_event_types):
-            result.append([separated_times[n], list(np.cumsum(separated_marks[n]))])
-        return result
-
-    @staticmethod
     def transition_matrix_to_string(transition_probabilities):
         """
 
@@ -875,7 +807,7 @@ class HybridHawkesExp:
         for n in range(size):
             e = events[n]
             x = states[n]
-            proportion_events_states[e][x] += 1
+            proportion_events_states[e, x] += 1
         proportion_events_states =  np.divide(proportion_events_states, size)
         proportion_events = np.sum(proportion_events_states, axis=1)
         proportion_states = np.sum(proportion_events_states, axis=0)
