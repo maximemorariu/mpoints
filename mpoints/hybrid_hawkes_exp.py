@@ -509,9 +509,39 @@ class HybridHawkesExp:
                            initial_condition_events, initial_condition_states, s, initial_state,
                            time_start, time_end, max_number_of_events)
 
-    'Likelihood, gradient and hessian'
+    'Likelihood and gradient'
 
     def log_likelihood_of_events(self, parameters, times, events, states, time_start, time_end):
+        r"""
+        Computes the log-likelihood of the observed times and event types under the assumption that they
+        are the realisation of a state-dependent Hawkes process with the given parameters.
+        The log-likelihood is given by
+
+        .. math::
+
+            l := \sum_{n : t_0 < t_n \leq T} \lambda_{e_n}(t_n) - \sum_e \int_{t_0}^T \lambda_e(t)dt,
+
+        where :math:`(t_n)` and :math:`(e_n)` are the sequences of event times and event types, respectively.
+
+        :type parameters: 1D numpy array
+        :param parameters: the parameters :math:`(\nu, \alpha, \beta)` put into a single array.
+                           Go from `parameters` to :math:`(\nu, \alpha, \beta)` and vice versa using
+                           :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.array_to_parameters`
+                           and :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.parameters_to_array`.
+        :type times: 1D numpy array of floats
+        :param times: the times at which events occur.
+        :type events: 1D numpy array of int
+        :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
+        :type states: 1D numpy array of int
+        :param states: the sequence of states, `states[n]` is the new state of the system following the `n` th event.
+        :type time_start: float
+        :param time_start: :math:`t_0`, the time at which we consider that the process started, prior times are treated as an
+                           initial condition.
+        :type time_end: float
+        :param time_end: :math:`T`, the time at which we stopped to record the process.
+        :rtype: float
+        :return: the log-likelihood :math:`l`.
+        """
         number_of_event_types = self.number_of_event_types
         number_of_states = self.number_of_states
         base_rates, impact_coefficients, decay_coefficients = \
