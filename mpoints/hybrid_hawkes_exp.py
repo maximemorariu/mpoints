@@ -112,13 +112,15 @@ class HybridHawkesExp:
     def estimate_transition_probabilities(self, events, states):
         r"""
         Estimates the transition probabilities :math:`\phi` of the state process from the data.
+        These are computed by maximising the likelihood of observing the given sample path.
+        One can prove that they coincide with the empirical transition probabilities.
 
         :type events: 1D array of int
         :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
         :type states: 1D array of int
         :param states: the sequence of states, `states[n]` is the new state of the system following the `n` th event.
         :rtype: 3D array
-        :return: the estimated transition probabilities :math:'\phi`.
+        :return: the estimated transition probabilities :math:`\phi`.
         """
         result = np.zeros((self.number_of_states, self.number_of_event_types, self.number_of_states))
         count_of_states_events = np.zeros((self.number_of_states, self.number_of_event_types))
