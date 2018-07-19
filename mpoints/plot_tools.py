@@ -436,7 +436,7 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
                 fig_name='kernels.pdf', title=None, palette=None, figsize=(9, 7), size_labels=16,
                 size_values=14, size_legend=16, bottom=None, top=None, left=None, right=None, savefig=False,
                 fig_array=None, fig=None,
-                tmin=None, tmax=None, npoints=500, ymax=None, alpha=1, legend_pos=0):
+                tmin=None, tmax=None, npoints=500, ymax=None, alpha=1, legend_pos=0, log_timescale=True):
     r"""
     Plots the kernels of a state-dependent Hawkes process.
     Here the kernels are assumed to be exponential, that is, :math:`k_{e'e}(t,x)=\alpha_{e'xe}\exp(-\beta_{e'xe}t)`.
@@ -501,6 +501,8 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
     :param alpha: between 0 and 1, transparency of the curves.
     :type legend_pos: int
     :param legend_pos: position of the legend in the array of figures.
+    :type log_timescale: boolean
+    :param log_timescale: set to False to plot in a linear timescale.
     :rtype: Figure, array of Axes
     :return: the figure and array of figures (see matplotlib).
     """
@@ -515,9 +517,13 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
     t_min = tmin
     if tmin is None:
         t_min = -np.log(0.9) / beta_max
-    order_min = np.floor(np.log10(t_min))
-    order_max = np.ceil(np.log10(t_max))
-    tt = np.logspace(order_min, order_max, num=npoints)
+    tt = np.zeros(1)
+    if log_timescale:
+        order_min = np.floor(np.log10(t_min))
+        order_max = np.ceil(np.log10(t_max))
+        tt = np.logspace(order_min, order_max, num=npoints)
+    else:
+        tt = np.linspace(tmin, tmax, num=npoints)
     norm_max = ymax
     if ymax is None:
         norm_max = np.max(np.divide(impact_coefficients, decay_coefficients)) * 1.05
@@ -542,7 +548,8 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
                     l = states_labels[x]
                 axes.plot(tt, yy, color=palette[x], label=l, alpha=alpha)
             axes.tick_params(axis='both', which='major', labelsize=size_values)  # font size for tick labels
-            axes.set_xscale('log')
+            if log_timescale:
+                axes.set_xscale('log')
             axes.set_ylim(ymin=0, ymax=norm_max)
             axes.set_xlim(xmin=t_min, xmax=t_max)
             if np.shape(events_labels) != ():
