@@ -502,7 +502,7 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
     :type legend_pos: int
     :param legend_pos: position of the legend in the array of figures.
     :type log_timescale: boolean
-    :param log_timescale: set to False to plot in a linear timescale.
+    :param log_timescale: set to False to plot with a linear timescale.
     :rtype: Figure, array of Axes
     :return: the figure and array of figures (see matplotlib).
     """
