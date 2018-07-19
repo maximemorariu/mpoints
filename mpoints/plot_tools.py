@@ -82,7 +82,7 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
     if palette==None:
         palette = seaborn.color_palette('husl', n_models)
     f, fig_array = plt.subplots(v_size, h_size, figsize=figsize, sharex='col', sharey='row')
-    if title != None:
+    if title is not None:
         f.suptitle(title)
     for i in range(v_size):
         for j in range(h_size):
@@ -124,7 +124,7 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
                 if log:
                     axes.set_xscale('log')
                     axes.set_yscale('log')
-                if labels != None:
+                if labels is not None:
                     axes.set_title( labels[n], fontsize=size_labels)
     plt.tight_layout()
     if bottom!=None:
@@ -186,16 +186,16 @@ def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labe
         n_models = len(residuals)
         dim = len(residuals[0])
     # set empty model labels if no labels provided
-    if model_labels == None:
+    if model_labels is None:
         model_labels = [None] * n_models
     v_size = dim
     h_size = dim
     seaborn.set()
     # seaborn.set_style('dark')  # no grid for good-looking small subplots
-    if palette == None:
+    if palette is None:
         palette = seaborn.color_palette('husl', n_models)
     f, fig_array = plt.subplots(v_size, h_size, figsize=figsize, sharex='col', sharey='row')
-    if title != None:
+    if title is not None:
         f.suptitle(title)
     for i in range(v_size):
         for j in range(h_size):
@@ -227,7 +227,7 @@ def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labe
                 if i+j==0:  # only add legend in the first subplot
                     legend = axes.legend(frameon=1, fontsize=size_legend)
                     legend.get_frame().set_facecolor('white')
-            if labels != None:
+            if labels is not None:
                 axes.set_title(labels[i] + r'$\rightarrow$' + labels[j], fontsize=size_labels)
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
     if bottom!=None:
@@ -287,18 +287,18 @@ def transition_probabilities(probabilities, shape=None, path='', fig_name='trans
     :rtype: Figure, array of Axes
     :return: the figure and array of figures (see matplotlib).
     """
-    if color_map == None:
+    if color_map is None:
         color_map = seaborn.cubehelix_palette(as_cmap=True, reverse=False, start=0.5, rot=-.75)
     number_of_states = np.shape(probabilities)[0]
     number_of_event_types = np.shape(probabilities)[1]
-    if shape == None:
+    if shape is None:
         v_size = 1
         h_size = number_of_event_types
     else:
         v_size = shape[0]
         h_size = shape[1]
     f, fig_array = plt.subplots(v_size, h_size, figsize=fig_size)
-    if title != None:
+    if title is not None:
         f.suptitle(title)
     for i in range(v_size):
         for j in range(h_size):
@@ -392,7 +392,7 @@ def discrete_distribution(probabilities, path=os.getcwd(), fig_name='distributio
     :rtype: Figure
     :return: the figure (see matplotlib).
     """
-    if color_map == None:
+    if color_map is None:
         color_map = seaborn.cubehelix_palette(as_cmap=True, reverse=False, start=0.5, rot=-.75)
     v_size = np.shape(probabilities)[0]
     h_size = np.shape(probabilities)[1]
@@ -422,10 +422,10 @@ def discrete_distribution(probabilities, path=os.getcwd(), fig_name='distributio
                     cmap=color_map, fmt='s', square=True, annot_kws={'size': size_values})
     ax.tick_params(axis='both', which='major', labelsize=size_labels)  # font size for tick labels
     ax.set_yticklabels(v_labels, va='center')
-    if title != None:
+    if title is not None:
         plt.title(title)
     plt.tight_layout()
-    if bottom != None:
+    if bottom is not None:
         plt.subplots_adjust(bottom=bottom, top=top, left=left, right=right)
     if savefig:
         entire_path = os.path.join(path, fig_name)
@@ -508,10 +508,10 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
     beta_min = np.min(decay_coefficients)
     beta_max = np.max(decay_coefficients)
     t_max = tmax
-    if tmax == None:
+    if tmax is None:
         t_max = -np.log(0.1) / beta_min
     t_min = tmin
-    if tmin == None:
+    if tmin is None:
         t_min = -np.log(0.9) / beta_max
     order_min = np.floor(np.log10(t_min))
     order_max = np.ceil(np.log10(t_max))
@@ -549,10 +549,10 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
             if pos == legend_pos and np.shape(states_labels) != () :
                 legend = axes.legend(frameon=1, fontsize=size_legend)
                 legend.get_frame().set_facecolor('white')
-    if title != None:
+    if title is not None:
         fig.suptitle(title, fontsize=size_labels)
     plt.tight_layout()
-    if bottom != None:
+    if bottom is not None:
         plt.subplots_adjust(bottom=bottom, top=top, left=left, right=right)
     if savefig:
         entire_path = os.path.join(path, fig_name)
