@@ -45,9 +45,14 @@ class HybridHawkesExp:
     def set_transition_probabilities(self, transition_probabilities):
         r"""
         Fixes the transition probabilities :math:`\phi` of the state-dependent Hawkes process.
+        The are used to :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.simulate` and
+        :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.compute_total_residuals`.
 
         :type transition_probabilities: 3D numpy array
-        :param transition_probabilities: shape should be :math:`(d_x, d_e,d_x)` where :math:`d_e` and :math:`d_x` are the number of event types and states, respectively. The entry :math:`i, j, k` is the probability of going from state :math:`i` to state :math:`k` when an event of type :math:`j` occurs.
+        :param transition_probabilities: shape should be :math:`(d_x, d_e,d_x)` where :math:`d_e` and :math:`d_x`
+                                         are the number of event types and states, respectively.
+                                         The entry :math:`i, j, k` is the probability of going from state :math:`i`
+                                         to state :math:`k` when an event of type :math:`j` occurs.
         :return:
         """
         'Raise ValueError if the given parameters do not have the right shape'
@@ -58,7 +63,11 @@ class HybridHawkesExp:
 
     def set_hawkes_parameters(self, base_rates, impact_coefficients, decay_coefficients):
         r"""
-        Fixes the parameters that define intensities (arrival rates) of events.
+        Fixes the parameters :math:`(\nu, \alpha, \beta)` that define the intensities (arrival rates) of events.
+        The are used in
+        :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.simulate`,
+        :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.compute_events_residuals`
+        and :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.compute_total_residuals`.
 
         :type base_rates: 1D numpy array
         :param base_rates: one base rate :math:`\nu_e` per event type :math:`e`.
@@ -128,24 +137,52 @@ class HybridHawkesExp:
     def estimate_hawkes_parameters(self, times, events, states, time_start, time_end, maximum_number_of_iterations=2000,
                                    method='TNC', parameters_lower_bound=10**(-6), parameters_upper_bound=None,
                                    given_guesses=[], number_of_random_guesses=1,
-                                   min_decay_coefficient=None, max_decay_coefficient=None, parallel_estimation=False):
-        """
+                                   min_decay_coefficient=None, max_decay_coefficient=None, parallel_estimation=True):
+        r"""
+        Estimates the parameters of the intensities (arrival rates) of events, i.e., :math:`(\nu, \alpha, \beta)`.
+        Estimation if performed via maximum likelihood. This method uses the `scipy.minimize` library.
 
-        :param times:
-        :param events:
-        :param states:
-        :param time_start:
-        :param time_end:
-        :param given_guesses:
-        :param number_of_random_guesses:
-        :param non_parametric_guess:
-        :param maximum_number_of_iterations:
-        :param min_decay_coefficient:
-        :param max_decay_coefficient:
-        :param delta_lag:
-        :param max_support:
-        :param n_quad:
-        :param method:
+        :type times: 1D numpy array of floats
+        :param times: the times at which events occur.
+        :type events: 1D numpy array of int
+        :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
+        :type states: 1D numpy array of int
+        :param states: the sequence of states, `states[n]` is the new state of the system following the `n` th event.
+        :type time_start: float
+        :param time_start: the time at which we consider that the process started, prior times are treated as an
+                           initial condition.
+        :type time_end: float
+        :param time_end: the time at which we stopped to record the process.
+        :type maximum_number_of_iterations: int
+        :param maximum_number_of_iterations:  will be passed to the `maxiter` argument in `scipy.minimize`.
+                                              Depending on `method`, it is the maximum number of iterations or
+                                              function evaluations.
+        :type method: string
+        :param method: the optimisation method used in `scipy.minimize`.
+        :type parameters_lower_bound: float
+        :param parameters_lower_bound: lower bound on all the parameters.
+        :type parameters_upper_bound: float
+        :param parameters_upper_bound: upper bound on all the parameters.
+        :type given_guesses: list of 1D numpy array
+        :param given_guesses: every member `x` is an initial guess on the parameters.
+                              For every `x`, we attempt to maximise the likelihood starting from `x`.
+                              One can go from `x` to :math:`(\nu, \alpha, \beta)` and vice versa using
+                              :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.array_to_parameters`
+                              and :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.parameters_to_array`.
+                              We retain the solution that gives the highest likelihood.
+        :type number_of_random_guesses: int
+        :param number_of_random_guesses: the method can also generate random initial guesses.
+        :type min_decay_coefficient: numpy array or float
+        :param min_decay_coefficient: defines how a random guess is generated.
+        :type max_decay_coefficient: numpy array of float
+        :param max_decay_coefficient: a random guess on :math:`\beta_{e'xe}` is generated uniformly in the interval
+                                      [`min_decay_coefficient[e',x,e]`, `max_decay_coefficient[e',x.e]`] but on a
+                                      logarithmic scale.
+        :type parallel_estimation: boolean
+        :param parallel_estimation: the MLE problem can be decomposed into :math:`d_e` independent optimisation
+                                    problems, where :math:`d_e` is the number of event types. When True, each problem
+                                    is solved independently. In this case, the limit on the number of iterations
+                                    or function evaluations is applied independently to each sub-problem.
         :return:
         """
         'If not specified  by the user, set the default range for the random guesses of the decay coefficients'
@@ -339,6 +376,16 @@ class HybridHawkesExp:
     'Specification testing and simulation'
 
     def compute_events_residuals(self, times, events, states, time_start, initial_partial_sums=0):
+        """
+        Computes the
+
+        :param times:
+        :param events:
+        :param states:
+        :param time_start:
+        :param initial_partial_sums:
+        :return:
+        """
         # Check if no initial partial sums if given
         s = np.zeros((self.number_of_event_types, self.number_of_states, self.number_of_event_types))
         if len(np.shape(initial_partial_sums)) != 0:
