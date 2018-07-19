@@ -109,7 +109,7 @@ class HybridHawkesExp:
         :param delta_lag:
         :param max_support:
         :param n_quad:
-        :param method
+        :param method:
         :return:
         """
         'If not specified  by the user, set the default range for the random guesses of the decay coefficients'
