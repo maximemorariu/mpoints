@@ -465,8 +465,8 @@ class HybridHawkesExp:
                                           s,
                                           initial_state)
 
-    def simulate(self, initial_condition_times, initial_condition_events, initial_condition_states,
-                 time_start, time_end, initial_partial_sums=0, initial_state=0, max_number_of_events=10**6):
+    def simulate(self, time_start, time_end, initial_condition_times=[], initial_condition_events=[],
+                 initial_condition_states=[], initial_partial_sums=0, initial_state=0, max_number_of_events=10**6):
         # Check if no initial partial sums if given
         s = np.zeros((self.number_of_event_types, self.number_of_states, self.number_of_event_types))
         if len(np.shape(initial_partial_sums))!=0:
