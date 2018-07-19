@@ -376,15 +376,29 @@ class HybridHawkesExp:
     'Specification testing and simulation'
 
     def compute_events_residuals(self, times, events, states, time_start, initial_partial_sums=0):
-        """
-        Computes the
+        r"""
+        Computes the events residuals :math:`r^e_n` defined by
 
-        :param times:
-        :param events:
-        :param states:
-        :param time_start:
-        :param initial_partial_sums:
-        :return:
+        .. math::
+
+            r^n_e := \int_{t^e_{n-1}}^{t^e_n} \lambda_e (t)dt,
+
+        where :math:`t^e_n` is the time when the `n` th event of type `e` occurred.
+
+        :type times: 1D numpy array of floats
+        :param times: the times at which events occur.
+        :type events: 1D numpy array of int
+        :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
+        :type states: 1D numpy array of int
+        :param states: the sequence of states, `states[n]` is the new state of the system following the `n` th event.
+        :type time_start: float
+        :param time_start: the time at which we consider that the process started, prior times are treated as an
+                           initial condition.
+        :type initial_partial_sums: 3D numpy array
+        :param initial_partial_sums: the initial condition can also be given implicitly via the partial sums
+                                     :math:`S_{e',x,e}(-\infty, \mbox{time_start}]`.
+        :rtype: list of 1D numpy arrays
+        :return: the `e` th element of the list is the sequence :math:`(r^e_n)` corresponding to the event type `e`.
         """
         # Check if no initial partial sums if given
         s = np.zeros((self.number_of_event_types, self.number_of_states, self.number_of_event_types))
