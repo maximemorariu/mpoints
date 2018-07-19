@@ -14,29 +14,52 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
     """
     Qq-plot of residuals.
 
+    :type residuals: list
     :param residuals: list of lists (one list of residuals per event type) or list of lists of lists when multiple models are compared (one list of lists per model).
+    :type shape: (int, int)
     :param shape: 2D-tuple (number of columns, number of rows), shape of the array of figures.
-    :param path: string, where the figure is saved.
-    :param fig_name: string, name of the file.
-    :param log: boolean, set to True for qq-plots with log-scale.
-    :param q_min: float, smallest quantile to plot (e.g., 0.01 for 1%).
-    :param q_max: float, largest quantile to plot.
-    :param number_of_quantiles: int.
-    :param title: string, suptitle.
-    :param labels: list of strings, labels of the event types.
-    :param model_labels: list of strings, names of the different considered models.
-    :param palette: color palette (list of colors), one color per model.
+    :type path: string
+    :param path: where the figure is saved.
+    :type fig_name: string
+    :param fig_name: name of the file.
+    :type log: boolean
+    :param log: set to True for qq-plots with log-scale.
+    :type q_min: float
+    :param q_min: smallest quantile to plot (e.g., 0.01 for 1%).
+    :type q_max: float
+    :param q_max: largest quantile to plot.
+    :type number_of_quantiles: int
+    :param number_of_quantiles: number of points used to plot.
+    :type title: string
+    :param title: suptitle.
+    :type labels: list of strings
+    :param labels: labels of the event types.
+    :type model_labels: list of strings
+    :param model_labels: names of the different considered models.
+    :type palette: list of colours
+    :param palette: color palette, one color per model.
+    :type figsize: (int, int)
     :param figsize: tuple (width, height).
-    :param size_labels: int, fontsize of labels.
-    :param size_ticks: int, fontsize of tick labels.
-    :param legend_size: int, fontsize of the legend.
-    :param bottom: float between 0 and 1, adjusts the bottom margin, see matplotlib subplots_adjust.
-    :param top: float between 0 and 1, adjusts the top margin, see matplotlib subplots_adjust.
-    :param left: float between 0 and 1, adjusts the left margin, see matplotlib subplots_adjust.
-    :param right: float between 0 and 1, adjusts the right margin, see matplotlib subplots_adjust.
-    :param savefig: boolean, set to True to save the figure.
-    :param leg_pos: int, position of the legend in the array of figures.
-    :return: figure, array of figures (the two objects are returned).
+    :type size_labels: int
+    :param size_labels: fontsize of labels.
+    :type size_ticks: int
+    :param size_ticks: fontsize of tick labels.
+    :type legend_size: int
+    :param legend_size: fontsize of the legend.
+    :type bottom: float
+    :param bottom: between 0 and 1, adjusts the bottom margin, see matplotlib subplots_adjust.
+    :type top: float
+    :param top: between 0 and 1, adjusts the top margin, see matplotlib subplots_adjust.
+    :type left: float
+    :param left: between 0 and 1, adjusts the left margin, see matplotlib subplots_adjust.
+    :type right: float
+    :param right: between 0 and 1, adjusts the right margin, see matplotlib subplots_adjust.
+    :type savefig: boolean
+    :param savefig: set to True to save the figure.
+    :type leg_pos: int
+    :param leg_pos: position of the legend in the array of figures.
+    :rtype: Figure, array of Axes
+    :return: the figure and array of figures (see matplotlib).
     """
     quantile_levels = np.linspace(q_min, q_max, number_of_quantiles)
     quantiles_theoretical = np.zeros(number_of_quantiles)
@@ -119,24 +142,42 @@ def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labe
     """
     Correlogram of residuals.
 
+    :type residuals: list
     :param residuals: list of lists (one list of residuals per event type) or list of lists of lists when multiple models are compared (one list of lists per model).
-    :param path: string, where the figure is saved.
-    :param fig_name: string, name of the file.
-    :param title: string, suptitle.
-    :param labels: list of strings, labels of the event types.
-    :param model_labels: list of strings, names of the different considered models.
-    :param palette: color palette (list of colors), one color per model.
-    :param n_lags: int, number of lags to plot.
+    :type path: string
+    :param path: where the figure is saved.
+    :type fig_name: string
+    :param fig_name: name of the file.
+    :type title: string
+    :param title: suptitle.
+    :type labels: list of strings
+    :param labels: labels of the event types.
+    :type model_labels: list of strings
+    :param model_labels: names of the different considered models.
+    :type palette: list of colours
+    :param palette: color palette, one color per model.
+    :type n_lags: int
+    :param n_lags: number of lags to plot.
+    :type figsize: (int, int)
     :param figsize: tuple (width, height).
-    :param size_labels: int, fontsize of labels.
-    :param size_ticks: int, fontsize of tick labels.
-    :param size_legend: int, fontsize of the legend.
-    :param bottom: float between 0 and 1, adjusts the bottom margin, see matplotlib subplots_adjust.
-    :param top: float between 0 and 1, adjusts the top margin, see matplotlib subplots_adjust.
-    :param left: float between 0 and 1, adjusts the left margin, see matplotlib subplots_adjust.
-    :param right: float between 0 and 1, adjusts the right margin, see matplotlib subplots_adjust.
-    :param savefig: boolean, set to True to save the figure.
-    :return: figure, array of figures (the two objects are returned).
+    :type size_labels: int
+    :param size_labels: fontsize of labels.
+    :type size_ticks: int
+    :param size_ticks: fontsize of tick labels.
+    :type legend_size: int
+    :param legend_size: fontsize of the legend.
+    :type bottom: float
+    :param bottom: between 0 and 1, adjusts the bottom margin, see matplotlib subplots_adjust.
+    :type top: float
+    :param top: between 0 and 1, adjusts the top margin, see matplotlib subplots_adjust.
+    :type left: float
+    :param left: between 0 and 1, adjusts the left margin, see matplotlib subplots_adjust.
+    :type right: float
+    :param right: between 0 and 1, adjusts the right margin, see matplotlib subplots_adjust.
+    :type savefig: boolean
+    :param savefig: set to True to save the figure.
+    :rtype: Figure, array of Axes
+    :return: the figure and array of figures (see matplotlib).
     """
     # find number of models given and number of event types (dim)
     n_models = 1
@@ -206,26 +247,45 @@ def transition_probabilities(probabilities, shape=None, path='', fig_name='trans
     """
     Annotated heatmap of the transition probabilities of a state-dependent Hawkes process.
 
-    :param probabilities: array with 3 dimensions, the transition probabilities.
+    :type probabilities: 3D array
+    :param probabilities: the transition probabilities.
+    :type shape: (int, int)
     :param shape: 2D-tuple (number of columns, number of rows), shape of the array of figures.
-    :param path: string, where the figure is saved.
-    :param fig_name: string, name of the file.
-    :param events_labels: list of strings, labels of the event types.
-    :param states_labels: list of strings, labels of the states.
-    :param title: string, suptitle.
+    :type path: string
+    :param path: where the figure is saved.
+    :type fig_name: string
+    :param fig_name: name of the file.
+    :type events_labels: list of strings
+    :param events_labels: labels of the event types.
+    :type states_labels: list of strings
+    :param states_labels: labels of the states.
+    :type title: string
+    :param title: suptitle.
     :param color_map: color map for the heatmap, see seaborn documentation.
-    :param fig_size: tuple (width, height).
-    :param size_labels: int, fontsize of labels.
-    :param size_values: int, fontsize of the annotations on top of the heatmap.
-    :param bottom: float between 0 and 1, adjusts the bottom margin, see matplotlib subplots_adjust.
-    :param top: float between 0 and 1, adjusts the top margin, see matplotlib subplots_adjust.
-    :param left: float between 0 and 1, adjusts the left margin, see matplotlib subplots_adjust.
-    :param right: float between 0 and 1, adjusts the right margin, see matplotlib subplots_adjust.
-    :param wspace: float, horizontal spacing between the subplots, see matplotlib subplots_adjust.
-    :param hspace: float, vertical spacing between the subplots, see matplotlib subplots_adjust.
-    :param savefig: boolean, set to True to save the figure.
-    :param usetex: boolean, set to True if matplolib figure is rendered with TeX.
-    :return: figure, array of figures (the two objects are returned).
+    :type figsize: (int, int)
+    :param figsize: tuple (width, height).
+    :type size_labels: int
+    :param size_labels: fontsize of labels.
+    :type size_values: int
+    :param size_values: fontsize of the annotations on top of the heatmap.
+    :type bottom: float
+    :param bottom: between 0 and 1, adjusts the bottom margin, see matplotlib subplots_adjust.
+    :type top: float
+    :param top: between 0 and 1, adjusts the top margin, see matplotlib subplots_adjust.
+    :type left: float
+    :param left: between 0 and 1, adjusts the left margin, see matplotlib subplots_adjust.
+    :type right: float
+    :param right: between 0 and 1, adjusts the right margin, see matplotlib subplots_adjust.
+    :type wspace: float
+    :param wspace: horizontal spacing between the subplots, see matplotlib subplots_adjust.
+    :type hspace: float
+    :param hspace: vertical spacing between the subplots, see matplotlib subplots_adjust.
+    :type savefig: boolean
+    :param savefig: set to True to save the figure.
+    :type usetex: boolean
+    :param usetex: set to True if matplolib figure is rendered with TeX.
+    :rtype: Figure, array of Axes
+    :return: the figure and array of figures (see matplotlib).
     """
     if color_map == None:
         color_map = seaborn.cubehelix_palette(as_cmap=True, reverse=False, start=0.5, rot=-.75)
@@ -298,23 +358,39 @@ def discrete_distribution(probabilities, path=os.getcwd(), fig_name='distributio
     """
     Annotated heatmap of a given discrete distribution with 2 dimensions.
 
-    :param probabilities: array with 2 dimensions, the 2D discrete distribution.
-    :param path: string, where the figure is saved.
-    :param fig_name: string, name of the file.
-    :param v_labels: list of strings, labels for the first dimension (vertical).
-    :param h_labels: list of strings, labels for the second dimension (horizontal).
-    :param title: string, suptitle.
+    :type probabilities: 2D array
+    :param probabilities: the 2D discrete distribution.
+    :type path: string
+    :param path: where the figure is saved.
+    :type fig_name: string
+    :param fig_name: name of the file.
+    :type v_labels: list of strings
+    :param v_labels: labels for the first dimension (vertical).
+    :type h_labels: list of strings
+    :param h_labels: labels for the second dimension (horizontal).
+    :type title: string
+    :param title: suptitle.
     :param color_map: color map for the heatmap, see seaborn documentation.
+    :type figsize: (int, int)
     :param figsize: tuple (width, height).
-    :param size_labels: int, fontsize of labels.
-    :param size_values: int, fontsize of the annotations on top of the heatmap.
-    :param bottom: float between 0 and 1, adjusts the bottom margin, see matplotlib subplots_adjust.
-    :param top: float between 0 and 1, adjusts the top margin, see matplotlib subplots_adjust.
-    :param left: float between 0 and 1, adjusts the left margin, see matplotlib subplots_adjust.
-    :param right: float between 0 and 1, adjusts the right margin, see matplotlib subplots_adjust.
-    :param savefig: boolean, set to True to save the figure.
-    :param usetex: boolean, set to True if matplolib figure is rendered with TeX.
-    :return: figure.
+    :type size_labels: int
+    :param size_labels: fontsize of labels.
+    :type size_values: int
+    :param size_values: fontsize of the annotations on top of the heatmap.
+    :type bottom: float
+    :param bottom: between 0 and 1, adjusts the bottom margin, see matplotlib subplots_adjust.
+    :type top: float
+    :param top: between 0 and 1, adjusts the top margin, see matplotlib subplots_adjust.
+    :type left: float
+    :param left: between 0 and 1, adjusts the left margin, see matplotlib subplots_adjust.
+    :type right: float
+    :param right: between 0 and 1, adjusts the right margin, see matplotlib subplots_adjust.
+    :type savefig: boolean
+    :param savefig: set to True to save the figure.
+    :type usetex: boolean
+    :param usetex: set to True if matplolib figure is rendered with TeX.
+    :rtype: Figure
+    :return: the figure (see matplotlib).
     """
     if color_map == None:
         color_map = seaborn.cubehelix_palette(as_cmap=True, reverse=False, start=0.5, rot=-.75)
@@ -356,11 +432,76 @@ def discrete_distribution(probabilities, path=os.getcwd(), fig_name='distributio
         plt.savefig(entire_path)
     return f
 
-def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, states_labels=None, path=os.getcwd(),
+def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, states_labels=None, path='',
                 fig_name='kernels.pdf', title=None, palette=None, figsize=(9, 7), size_labels=16,
                 size_values=14, size_legend=16, bottom=None, top=None, left=None, right=None, savefig=False,
                 fig_array=None, fig=None,
                 tmin=None, tmax=None, npoints=500, ymax=None, alpha=1, legend_pos=0):
+    r"""
+    Plots the kernels of a state-dependent Hawkes process.
+    Here the kernels are assumed to be exponential, that is, :math:`k_{e'e}(t,x)=\alpha_{e'xe}\exp(-\beta_{e'xe}t)`.
+    We plot the functions
+
+    .. math::
+        t\mapsto ||k_{e'e}(\cdot,x)||_{1,t} := \int _{0}^{t} k_{e'e}(s,x)ds.
+
+    There is a subplot for each couple of event types :math:`(e',e)`.
+    In each subplot, there is a curve for each possible state :math:`x`.
+
+    :type impact_coefficients: 3D array
+    :param impact_coefficients: the alphas :math:`\alpha_{e'xe}`.
+    :type decay_coefficients: 3D array
+    :param decay_coefficients: the betas :math:`\beta_{e'xe}`.
+    :type events_labels: list of strings
+    :param events_labels: labels of the event types.
+    :type states_labels: list of strings
+    :param states_labels: labels of the states.
+    :type path: string
+    :param path: where the figure is saved.
+    :type fig_name: string
+    :param fig_name: name of the file.
+    :type events_labels: list of strings
+    :type title: string
+    :param title: suptitle.
+    :type palette: list of colours
+    :param palette: color palette, one color per state :math:`x`.
+    :type figsize: (int, int)
+    :param figsize: tuple (width, height).
+    :type size_labels: int
+    :param size_labels: fontsize of labels.
+    :type size_values: int
+    :param size_values: fontsize of tick labels.
+    :type size_legend: int
+    :param size_legend: fontsize of the legend.
+    :type bottom: float
+    :param bottom: between 0 and 1, adjusts the bottom margin, see matplotlib subplots_adjust.
+    :type top: float
+    :param top: between 0 and 1, adjusts the top margin, see matplotlib subplots_adjust.
+    :type left: float
+    :param left: between 0 and 1, adjusts the left margin, see matplotlib subplots_adjust.
+    :type right: float
+    :param right: between 0 and 1, adjusts the right margin, see matplotlib subplots_adjust.
+    :type savefig: boolean
+    :param savefig: set to True to save the figure.
+    :type fig_array: array of Axes
+    :param fig_array: fig_array, where to plot the kernels (see matplotlib).
+    :type fig: Figure
+    :param fig: figure, where to plot the figure (see matplotlib).
+    :type tmin: float
+    :param tmin: we plot over the time interval [`tmin`, `tmax`].
+    :type tmax: float
+    :param tmax: we plot over the time interval [`tmin`, `tmax`].
+    :type npoints: int
+    :param npoints: number of points used to plot.
+    :type ymax: float
+    :param ymax: upper limit of the y axis.
+    :type alpha: float
+    :param alpha: between 0 and 1, transparency of the curves.
+    :type legend_pos: int
+    :param legend_pos: position of the legend in the array of figures.
+    :rtype: Figure, array of Axes
+    :return: the figure and array of figures (see matplotlib).
+    """
     s = np.shape(impact_coefficients)
     number_of_event_types = s[0]
     number_of_states = s[1]
@@ -420,6 +561,42 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
 
 def sample_path(times, events, states, model, time_start, time_end, color_palette=None, labelsize=16, ticksize=14,
                 legendsize=16, num=1000, s=12, savefig=False, path='', fig_name='sample_path.pdf'):
+    r"""
+    Plots a sample path along with the intensities.
+
+    :type times: array of floats
+    :param times: times when the events occur.
+    :type events: array of int
+    :param events: type of the event at each event time.
+    :type states: array of int
+    :param states: state process after each event time.
+    :type model: :py:class:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp`
+    :param model: the model that is used to compute the intensities.
+    :type time_start: float
+    :param time_start: time at which the plot starts.
+    :type time_end: float
+    :param time_end: time at which the plot ends.
+    :type color_palette: list of colours
+    :param color_palette: one colour per event type.
+    :type labelsize: int
+    :param labelsize: fontsize of labels.
+    :type ticksize: int
+    :param ticksize: fontsize of tick labels.
+    :type legendsize: int
+    :param legendsize: fontsize of the legend.
+    :type num: int
+    :param num: number of points used to plot.
+    :type s: int
+    :param s: size of the dots in the scatter plot of the events.
+    :type savefig: boolean
+    :param savefig: set to True to save the figure.
+    :type path: string
+    :param path:  where the figure is saved.
+    :type fig_name: string
+    :param fig_name: name of the file.
+    :rtype: Figure, array of Axes
+    :return: the figure and array of figures (see matplotlib).
+    """
     if color_palette is None:
         color_palette = seaborn.color_palette('husl', n_colors=model.number_of_event_types)
     'Compute the intensities - this may require all the event times prior to start_time'
