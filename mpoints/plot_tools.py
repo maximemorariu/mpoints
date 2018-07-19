@@ -445,6 +445,8 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
     .. math::
         t\mapsto ||k_{e'e}(\cdot,x)||_{1,t} := \int _{0}^{t} k_{e'e}(s,x)ds.
 
+    The quantity :math:`||k_{e'e}(\cdot,x)||_{1,t}` can be interpreted as the average number of events of type :math:`e`
+    that are directly precipitated by an event of type :math:`e'` within :math:`t` units of time, under state :math:`x`.
     There is a subplot for each couple of event types :math:`(e',e)`.
     In each subplot, there is a curve for each possible state :math:`x`.
 
