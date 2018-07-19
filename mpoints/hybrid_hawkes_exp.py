@@ -467,6 +467,32 @@ class HybridHawkesExp:
 
     def simulate(self, time_start, time_end, initial_condition_times=[], initial_condition_events=[],
                  initial_condition_states=[], initial_partial_sums=0, initial_state=0, max_number_of_events=10**6):
+        """
+        Simulates a sample path of the state-dependent Hawkes process.
+        The methods wraps a C implementation that was obtained via Cython.
+
+        :type time_start: float
+        :param time_start: time at which the simulation starts.
+        :type time_end: float
+        :param time_end: time at which the simulation ends.
+        :type initial_condition_times: array
+        :param initial_condition_times: times of events before and including `time_start`.
+        :type initial_condition_events: array of int
+        :param initial_condition_events: types of the events that occurred at `initial_condition_times`.
+        :type initial_condition_states: array of int
+        :param initial_condition_states: values of the state process just after the `initial_condition_times`.
+        :type initial_partial_sums: 3D numpy array
+        :param initial_partial_sums: the initial condition can also be given implicitly via the partial sums
+                                     :math:`S_{e',x,e}(-\infty, \mbox{time_start}]`.
+        :type initial_state: int
+        :param initial_state: if there are no event times before `time_start`, this is used as the initial state.
+        :type max_number_of_events: int
+        :param max_number_of_events: the simulation stops when this number of events is reached
+                                     (including the initial condition).
+        :rtype: array, array of int, array of int
+        :return: the times at which the events occur, their types and the values of the state process right after
+                 each event. Note that these include the initial condition as well.
+        """
         # Check if no initial partial sums if given
         s = np.zeros((self.number_of_event_types, self.number_of_states, self.number_of_event_types))
         if len(np.shape(initial_partial_sums))!=0:
