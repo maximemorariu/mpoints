@@ -8,8 +8,30 @@ from . import hybrid_hawkes_exp_cython as cy
 class HybridHawkesExp:
     """
     Implements state-dependent Hawkes processes with exponential kernels, a subclass of hybrid marked point processes.
+    This class allows to both simulate and estimate.
+
+    :type number_of_event_types: int
+    :param number_of_event_types: number of different event types.
+    :type number_of_states: int
+    :param number_of_states: number of possible states.
+    :type events_labels: list of strings
+    :param events_labels: names of the different event types.
+    :type states_labels: list of strings
+    :param states_labels: names of the possible states.
     """
     def __init__(self, number_of_event_types, number_of_states, events_labels, states_labels):
+        """
+        Initialises an instance.
+
+        :type number_of_event_types: int
+        :param number_of_event_types: number of different event types.
+        :type number_of_states: int
+        :param number_of_states: number of possible states.
+        :type events_labels: list of strings
+        :param events_labels: names of the different event types.
+        :type states_labels: list of strings
+        :param states_labels: names of the possible states.
+        """
         self.number_of_event_types = number_of_event_types
         self.number_of_states = number_of_states
         self.events_labels = events_labels
@@ -21,9 +43,11 @@ class HybridHawkesExp:
         self.impact_decay_ratios = np.zeros((number_of_event_types, number_of_states, number_of_event_types))
 
     def set_transition_probabilities(self, transition_probabilities):
-        """
+        r"""
+        Fixes the transition probabilities :math:`\phi` of the state-dependent Hawkes process.
 
-        :param transition_probabilities:
+        :type transition_probabilities: 3D numpy array
+        :param transition_probabilities: shape should be :math:`(d_x, d_e,d_x)` where :math:`d_e` and :math:`d_x` are the number of event types and states, respectively. The entry :math:`i, j, k` is the probability of going from state :math:`i` to state :math:`k` when an event of type :math:`j` occurs.
         :return:
         """
         'Raise ValueError if the given parameters do not have the right shape'
@@ -33,11 +57,15 @@ class HybridHawkesExp:
         self.transition_probabilities = copy.copy(transition_probabilities)
 
     def set_hawkes_parameters(self, base_rates, impact_coefficients, decay_coefficients):
-        """
+        r"""
+        Fixes the parameters that define intensities (arrival rates) of events.
 
-        :param base_rates:
-        :param impact_coefficients:
-        :param decay_coefficients:
+        :type base_rates: 1D numpy array
+        :param base_rates: one base rate :math:`\nu_e` per event type :math:`e`.
+        :type impact_coefficients: 3D numpy array
+        :param impact_coefficients: the alphas :math:`\alpha_{e'xe}`.
+        :type decay_coefficients: 3D numpy array
+        :param decay_coefficients: the betas :math:`\beta_{e'xe}`.
         :return:
         """
         'Raise ValueError if the given parameters do not have the right shape'
@@ -56,24 +84,32 @@ class HybridHawkesExp:
 
     @staticmethod
     def kernel_at_time(time, alpha, beta):
-        """
-        Computes the kernel function of the model at the given time with the given parameters.
-        :param time:
-        :param alpha:
-        :param beta:
-        :return:
+        r"""
+        Evaluates the kernel of the model at the given time with the given parameters.
+
+        :type time: float
+        :param time: the positive time :math:`t`.
+        :type alpha: float
+        :param alpha: a non-negative :math:`\alpha`.
+        :type beta: float
+        :param beta: a positive :math:`\beta`.
+        :rtype: float
+        :return: :math:`\alpha\exp(-\beta t)`.
         """
         return alpha * np.exp(- np.multiply(time, beta))
 
     'Functions that estimate the model parameters'
 
     def estimate_transition_probabilities(self, events, states):
-        """
-        Estimates the transition probabilities of the state process from the data.
-        :param events: [array] the sequence of event types.
-        :param states: [array] the sequence of states, states[n] is the new state of the system at time times[n]
-        following an event of type events[n].
-        :return: [3D array]
+        r"""
+        Estimates the transition probabilities :math:`\phi` of the state process from the data.
+
+        :type events: 1D array of int
+        :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
+        :type states: 1D array of int
+        :param states: the sequence of states, `states[n]` is the new state of the system following the `n` th event.
+        :rtype: 3D array
+        :return: the estimated transition probabilities :math:'\phi`.
         """
         result = np.zeros((self.number_of_states, self.number_of_event_types, self.number_of_states))
         count_of_states_events = np.zeros((self.number_of_states, self.number_of_event_types))
@@ -81,12 +117,12 @@ class HybridHawkesExp:
             event = events[n]
             state_before = states[n - 1]
             state_after = states[n]
-            count_of_states_events[state_before][event] += 1
-            result[state_before][event][state_after] += 1
+            count_of_states_events[state_before, event] += 1
+            result[state_before, event, state_after] += 1
         for x1 in range(self.number_of_states):
             for e in range(self.number_of_event_types):
                 for x2 in range(self.number_of_states):
-                    result[x1][e][x2] /= count_of_states_events[x1][e]
+                    result[x1, e, x2] /= count_of_states_events[x1, e]
         return result
 
     def estimate_hawkes_parameters(self, times, events, states, time_start, time_end, maximum_number_of_iterations=2000,
