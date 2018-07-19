@@ -522,6 +522,7 @@ class HybridHawkesExp:
             l := \sum_{n : t_0 < t_n \leq T} \lambda_{e_n}(t_n) - \sum_e \int_{t_0}^T \lambda_e(t)dt,
 
         where :math:`(t_n)` and :math:`(e_n)` are the sequences of event times and event types, respectively.
+        The method wraps a C implementation that was obtained via Cython.
 
         :type parameters: 1D numpy array
         :param parameters: the parameters :math:`(\nu, \alpha, \beta)` put into a single array.
@@ -550,6 +551,30 @@ class HybridHawkesExp:
                              number_of_states, times, events, states, np.float(time_start), np.float(time_end))
 
     def gradient(self, parameters, times, events, states, time_start, time_end):
+        r"""
+        Computes the gradient of the log-likelihood :math:`l` with respect to the
+        parameters :math:`(\nu, \alpha, \beta)`.
+        The method wraps a C implementation that was obtained via Cython.
+
+        :type parameters: 1D numpy array
+        :param parameters: the parameters :math:`(\nu, \alpha, \beta)` put into a single array.
+                           Go from `parameters` to :math:`(\nu, \alpha, \beta)` and vice versa using
+                           :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.array_to_parameters`
+                           and :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.parameters_to_array`.
+        :type times: 1D numpy array of floats
+        :param times: the times at which events occur.
+        :type events: 1D numpy array of int
+        :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
+        :type states: 1D numpy array of int
+        :param states: the sequence of states, `states[n]` is the new state of the system following the `n` th event.
+        :type time_start: float
+        :param time_start: :math:`t_0`, the time at which we consider that the process started, prior times are treated as an
+                           initial condition.
+        :type time_end: float
+        :param time_end: :math:`T`, the time at which we stopped to record the process.
+        :rtype: float
+        :return: the gradient of the log-likelihood :math:`l`.
+        """
         number_of_event_types = self.number_of_event_types
         number_of_states = self.number_of_states
         base_rates, impact_coefficients, decay_coefficients = \
@@ -560,6 +585,42 @@ class HybridHawkesExp:
         return self.parameters_to_array(g_base_rates, g_impact_coefficients, g_decay_coefficients)
 
     def log_likelihood_of_events_partial(self, event_type, parameters, times, events, states, time_start, time_end):
+        r"""
+        Computes the log-likelihood of the arrival times of events of the given type under the assumption that they
+        are the realisation of a state-dependent Hawkes process with the given parameters.
+        These parameters include only those that govern :math:`\lambda_e`, the intensity of events of type `e`.
+        For example, among the base rates :math:`\nu`, only :math:`\nu_e` should be contained in `parameters`.
+        This partial log-likelihood is given by
+
+        .. math::
+
+            l_e := \sum_{n : t_0 < t^e_n \leq T} \lambda_{e}(t^e_n) - \int_{t_0}^T \lambda_e(t)dt,
+
+        where :math:`(t^e_n)` are the arrival times of events of the given type `e`.
+        The method wraps a C implementation that was obtained via Cython.
+
+        :type event_type: int
+        :param event_type: `e`, the event type for which we want to compute the partial log-likelihood :math:`l_e`.
+        :type parameters: 1D numpy array
+        :param parameters: only the parameters :math:`(\nu, \alpha, \beta)` that govern :math:`\lambda_e`  put into a single
+                           array.
+                           Go from `parameters` to :math:`(\nu, \alpha, \beta)` and vice versa using
+                           :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.array_to_parameters`
+                           and :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.parameters_to_array`.
+        :type times: 1D numpy array of floats
+        :param times: the times at which events occur.
+        :type events: 1D numpy array of int
+        :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
+        :type states: 1D numpy array of int
+        :param states: the sequence of states, `states[n]` is the new state of the system following the `n` th event.
+        :type time_start: float
+        :param time_start: :math:`t_0`, the time at which we consider that the process started, prior times are treated as an
+                           initial condition.
+        :type time_end: float
+        :param time_end: :math:`T`, the time at which we stopped to record the process.
+        :rtype: float
+        :return: the partial log-likelihood :math:`l_e`.
+        """
         number_of_event_types = self.number_of_event_types
         number_of_states = self.number_of_states
         base_rate, impact_coefficients, decay_coefficients = \
@@ -570,6 +631,34 @@ class HybridHawkesExp:
                                                    np.float(time_start), np.float(time_end))
 
     def gradient_partial(self, event_type, parameters, times, events, states, time_start, time_end):
+        r"""
+        Computes the gradient of the partial log-likelihood :math:`l_e` with respect to the
+        parameters :math:`(\nu, \alpha, \beta)` that govern :math:`\lambda_e`, the intensity of events of type `e`.
+        The method wraps a C implementation that was obtained via Cython.
+
+        :type event_type: int
+        :param event_type: `e`, the event type for which we want to compute the gradient of the partial
+                            log-likelihood :math:`l_e`.
+        :type parameters: 1D numpy array
+        :param parameters: only the parameters :math:`(\nu, \alpha, \beta)` that govern :math:`\lambda_e`  put into a single
+                           array.
+                           Go from `parameters` to :math:`(\nu, \alpha, \beta)` and vice versa using
+                           :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.array_to_parameters`
+                           and :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.parameters_to_array`.
+        :type times: 1D numpy array of floats
+        :param times: the times at which events occur.
+        :type events: 1D numpy array of int
+        :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
+        :type states: 1D numpy array of int
+        :param states: the sequence of states, `states[n]` is the new state of the system following the `n` th event.
+        :type time_start: float
+        :param time_start: :math:`t_0`, the time at which we consider that the process started, prior times are treated as an
+                           initial condition.
+        :type time_end: float
+        :param time_end: :math:`T`, the time at which we stopped to record the process.
+        :rtype: float
+        :return: the gradient of the partial log-likelihood :math:`l_e`.
+        """
         number_of_event_types = self.number_of_event_types
         number_of_states = self.number_of_states
         base_rate, impact_coefficients, decay_coefficients = \
