@@ -381,9 +381,10 @@ class HybridHawkesExp:
 
         .. math::
 
-            r^n_e := \int_{t^e_{n-1}}^{t^e_n} \lambda_e (t)dt,
+            r^e_n := \int_{t^e_{n-1}}^{t^e_n} \lambda_e (t)dt,
 
         where :math:`t^e_n` is the time when the `n` th event of type `e` occurred.
+        The methods wraps a C implementation that was obtained via Cython.
 
         :type times: 1D numpy array of floats
         :param times: the times at which events occur.
@@ -418,6 +419,34 @@ class HybridHawkesExp:
 
     def compute_total_residuals(self, times, events, states, time_start, initial_partial_sums=0,
                                 initial_state = 0):
+        r"""
+
+        Computes the total residuals :math:`r^{ex}_n` defined by
+
+        .. math::
+
+            r^{ex}_n := \int_{t^{ex}_{n-1}}^{t^{ex}_n}\phi_{e}(X(t),x) \lambda_e (t)dt,
+
+        where :math:`t^{ex}_n` is the time when the `n` th event of type `e` after which the state is `x` occurred.
+        The methods wraps a C implementation that was obtained via Cython.
+
+        :type times: 1D numpy array of floats
+        :param times: the times at which events occur.
+        :type events: 1D numpy array of int
+        :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
+        :type states: 1D numpy array of int
+        :param states: the sequence of states, `states[n]` is the new state of the system following the `n` th event.
+        :type time_start: float
+        :param time_start: the time at which we consider that the process started, prior times are treated as an
+                           initial condition.
+        :type initial_partial_sums: 3D numpy array
+        :param initial_partial_sums: the initial condition can also be given implicitly via the partial sums
+                                     :math:`S_{e',x,e}(-\infty, \mbox{time_start}]`.
+        :type initial_state: int
+        :param initial_state: if there are no event times before `time_start`, this is used as the initial state.
+        :rtype: list of 1D numpy arrays
+        :return: the sequence :math:`(r^{ex}_n)` is the `x` + `e` * `number_of_states` element in the list.
+        """
         # Check if no initial partial sums if given
         s = np.zeros((self.number_of_event_types, self.number_of_states, self.number_of_event_types))
         if len(np.shape(initial_partial_sums)) != 0:
