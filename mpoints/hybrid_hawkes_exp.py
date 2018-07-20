@@ -448,7 +448,7 @@ class HybridHawkesExp:
         :type initial_state: int
         :param initial_state: if there are no event times before `time_start`, this is used as the initial state.
         :rtype: list of 1D numpy arrays
-        :return: the sequence :math:`(r^{ex}_n)` is the `x` + `e` * `number_of_states` element in the list.
+        :return: the sequence :math:`(r^{ex}_n)` is the `x` + `e` * `number_of_states` th element in the list.
         """
         # Check if no initial partial sums if given
         s = np.zeros((self.number_of_event_types, self.number_of_states, self.number_of_event_types))
@@ -773,19 +773,41 @@ class HybridHawkesExp:
 
     def compute_partial_sums(self, times, events, states, time_end,
                              initial_partial_sums=None, time_initial_condition=None):
-        """
+        r"""
+        Computes the partial sums
 
-        :param times:
-        :param events:
-        :param states:
-        :param time_end:
-        :param initial_partial_sums:
-        :param time_initial_condition:
-        :return:
+        .. math::
+
+            S_{e'xe}(-\infty,T] := \alpha_{e'xe} \sum_{n : t^{e'x}_n \leq T} \exp(-\beta_{e'xe}(T-t^{e'x}_n)),
+
+        where `e` and `e'` are event types, `x` is a possible state, :math:`t^{e'x}_n` is the time when the `n` th
+        event of type `e'` after which the state is `x` occurred.
+        The collection of partial sums :math:`(S_{e'xe})` at time :math:`T` encodes the history of the
+        state-dependent Hawkes process up to time :math:`T`. It can for example be used to simulate the process from
+        time :math:`T`. In :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.simulate`, one can pass the partial
+        sums as an initial condition instead of the entire history.
+
+        :type times: 1D numpy array of float
+        :param times: the times at which events occur.
+        :type events: 1D numpy array of int
+        :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
+        :type states: 1D numpy array of int
+        :param states: the sequence of states, `states[n]` is the new state of the system following the `n` th event.
+        :type time_end: float
+        :param time_end: :math:`T`, the time up to which the partial sums are computed.
+        :type initial_partial_sums: 3D numpy array of float
+        :param initial_partial_sums: an initial condition (events that occur before `times`) can be given implicitly
+                                     as partial sums.
+        :type time_initial_condition: float
+        :param time_initial_condition: the time up to which the partial sums given as an initial condition were
+                                       computed.
+        :rtype: 3D numpy array of float
+        :return: the partial sums, `array[e', x, e]` corresponds to :math:`S_{e'x'e}`.
         """
         'Compute contribution of the given events'
         partial_sums = np.zeros((self.number_of_event_types, self.number_of_states, self.number_of_event_types))
-        for n in range(len(times)):
+        index_end = bisect.bisect_right(times, time_end)
+        for n in range(index_end):
             time = times[n]
             event = events[n]
             state = states[n]
