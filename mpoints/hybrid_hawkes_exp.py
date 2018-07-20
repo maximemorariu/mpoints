@@ -145,7 +145,7 @@ class HybridHawkesExp:
         Estimates the parameters of the intensities (arrival rates) of events, i.e., :math:`(\nu, \alpha, \beta)`.
         Estimation if performed via maximum likelihood. This method uses the `scipy.minimize` library.
 
-        :type times: 1D numpy array of floats
+        :type times: 1D numpy array of float
         :param times: the times at which events occur.
         :type events: 1D numpy array of int
         :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
@@ -389,7 +389,7 @@ class HybridHawkesExp:
         where :math:`t^e_n` is the time when the `n` th event of type `e` occurred.
         The methods wraps a C implementation that was obtained via Cython.
 
-        :type times: 1D numpy array of floats
+        :type times: 1D numpy array of float
         :param times: the times at which events occur.
         :type events: 1D numpy array of int
         :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
@@ -433,7 +433,7 @@ class HybridHawkesExp:
         where :math:`t^{ex}_n` is the time when the `n` th event of type `e` after which the state is `x` occurred.
         The methods wraps a C implementation that was obtained via Cython.
 
-        :type times: 1D numpy array of floats
+        :type times: 1D numpy array of float
         :param times: the times at which events occur.
         :type events: 1D numpy array of int
         :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
@@ -532,7 +532,7 @@ class HybridHawkesExp:
                            Go from `parameters` to :math:`(\nu, \alpha, \beta)` and vice versa using
                            :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.array_to_parameters`
                            and :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.parameters_to_array`.
-        :type times: 1D numpy array of floats
+        :type times: 1D numpy array of float
         :param times: the times at which events occur.
         :type events: 1D numpy array of int
         :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
@@ -564,7 +564,7 @@ class HybridHawkesExp:
                            Go from `parameters` to :math:`(\nu, \alpha, \beta)` and vice versa using
                            :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.array_to_parameters`
                            and :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.parameters_to_array`.
-        :type times: 1D numpy array of floats
+        :type times: 1D numpy array of float
         :param times: the times at which events occur.
         :type events: 1D numpy array of int
         :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
@@ -610,7 +610,7 @@ class HybridHawkesExp:
                            Go from `parameters` to :math:`(\nu, \alpha, \beta)` and vice versa using
                            :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.array_to_parameters`
                            and :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.parameters_to_array`.
-        :type times: 1D numpy array of floats
+        :type times: 1D numpy array of float
         :param times: the times at which events occur.
         :type events: 1D numpy array of int
         :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
@@ -648,7 +648,7 @@ class HybridHawkesExp:
                            Go from `parameters` to :math:`(\nu, \alpha, \beta)` and vice versa using
                            :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.array_to_parameters`
                            and :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.parameters_to_array`.
-        :type times: 1D numpy array of floats
+        :type times: 1D numpy array of float
         :param times: the times at which events occur.
         :type events: 1D numpy array of int
         :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
@@ -680,14 +680,21 @@ class HybridHawkesExp:
 
     def intensities_of_events_at_times(self, compute_times, times, events, states):
         """
-        Computes the intensities at the given 'compute_times' given a realisation of the hybrid marked point process.
-        :param compute_times: [array]
-        :param times: [array] the event times of the realisation.
-        :param events: [array] the sequence of event types of the realisation.
-        :param states: [array] the sequence of states of the realisation.
-        :return: [array], [array] the first array gives the times at which the intensity is computed,
-        including the event times of the given realisation that occur in between.
-        The second array gives the intensities, one array per event type.
+        Computes the intensities at the `compute_times` given a realisation of the state-dependent Hawkes process.
+
+        :type compute_times: 1D numpy array of float
+        :param compute_times: the times at which the intensities will be computed.
+        :type times: 1D numpy array of float
+        :param times: the times at which events occur.
+        :type events: 1D numpy array of int
+        :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
+        :type states: 1D numpy array of int
+        :param states: the sequence of states, `states[n]` is the new state of the system following the `n` th event.
+        :rtype: 1D numpy array of float, 2D numpy array of float
+        :return: the first array contains both the `compute_times` and the event times of the given realisation,
+                 in increasing order.
+                 The second array gives the intensities at the times of the first array.
+                 `array2[e,n]` is the intensity of events of type `e` at time `array1[n]`.
         """
         'Start/end time and first index of event times'
         time_start = compute_times[0]  # time at which we start to compute the intensity
@@ -703,9 +710,9 @@ class HybridHawkesExp:
             event = events[n]
             state = states[n]
             for e in range(self.number_of_event_types):
-                alpha = self.impact_coefficients[event][state][e]
-                beta = self.decay_coefficients[event][state][e]
-                partial_sums[event][state][e] += alpha * math.exp(-beta * (time_start - time))
+                alpha = self.impact_coefficients[event, state, e]
+                beta = self.decay_coefficients[event, state, e]
+                partial_sums[event, state, e] += alpha * math.exp(-beta * (time_start - time))
         'Create aggregated sequence of times, events, and states (event times + compute times)'
         times_aggregated = []
         events_aggregated = []
@@ -717,6 +724,8 @@ class HybridHawkesExp:
                 states_aggregated.append(-1)
             elif t > next_event_time:
                 while next_event_time < t:
+                    'We add it twice so that the intensity is computed just before and right after'
+                    'This is to get nice looking figures when plotting the intensities'
                     times_aggregated.append(next_event_time)
                     times_aggregated.append(next_event_time)
                     event = events[next_event_time_index]
@@ -738,7 +747,7 @@ class HybridHawkesExp:
         result_intensities = np.zeros((self.number_of_event_types, number_of_times))
         intensities = self.intensities_of_events(partial_sums)
         for e in range(self.number_of_event_types):
-            result_intensities[e][0] = intensities[e]
+            result_intensities[e, 0] = intensities[e]
         for n in range(1, number_of_times):
             time_increment = times_aggregated[n] - times_aggregated[n-1]
             event = events_aggregated[n]
@@ -747,18 +756,18 @@ class HybridHawkesExp:
                 for e1 in range(self.number_of_event_types):
                     for x in range(self.number_of_states):
                         for e2 in range(self.number_of_event_types):
-                            beta = self.decay_coefficients[e1][x][e2]
-                            partial_sums[e1][x][e2] *= math.exp(-beta * time_increment)
+                            beta = self.decay_coefficients[e1, x, e2]
+                            partial_sums[e1, x, e2] *= math.exp(-beta * time_increment)
             'Update partial sums: impact of new event'
             if event >= 0:
                 state = states_aggregated[n]
                 for e2 in range(self.number_of_event_types):
-                    alpha = self.impact_coefficients[event][state][e2]
-                    partial_sums[event][state][e2] += alpha
+                    alpha = self.impact_coefficients[event, state, e2]
+                    partial_sums[event, state, e2] += alpha
             'Compute intensities and save'
             intensities = self.intensities_of_events(partial_sums)
             for e1 in range(self.number_of_event_types):
-                result_intensities[e1][n] = intensities[e1]
+                result_intensities[e1, n] = intensities[e1]
         return times_aggregated, result_intensities
 
     def compute_partial_sums(self, times, events, states, time_end,
