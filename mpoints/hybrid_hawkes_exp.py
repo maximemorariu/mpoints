@@ -692,7 +692,8 @@ class HybridHawkesExp:
         :param states: the sequence of states, `states[n]` is the new state of the system following the `n` th event.
         :rtype: 1D numpy array of float, 2D numpy array of float
         :return: the first array contains both the `compute_times` and the event times of the given realisation,
-                 in increasing order.
+                 in increasing order. Note that the event times are put there twice:
+                 the intensities are computed just before and right after the event times.
                  The second array gives the intensities at the times of the first array.
                  `array2[e,n]` is the intensity of events of type `e` at time `array1[n]`.
         """
