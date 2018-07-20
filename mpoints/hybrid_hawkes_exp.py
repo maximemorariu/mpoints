@@ -7,8 +7,9 @@ from . import hybrid_hawkes_exp_cython as cy
 
 class HybridHawkesExp:
     """
-    Implements state-dependent Hawkes processes with exponential kernels, a subclass of hybrid marked point processes.
-    This class allows to both simulate and estimate.
+    This class implements state-dependent Hawkes processes with exponential kernels, a subclass of hybrid marked point
+    processes.
+    The main features it provides include simulation and statistical inference (estimation).
 
     :type number_of_event_types: int
     :param number_of_event_types: number of different event types.
@@ -112,8 +113,8 @@ class HybridHawkesExp:
     def estimate_transition_probabilities(self, events, states):
         r"""
         Estimates the transition probabilities :math:`\phi` of the state process from the data.
-        These are computed by maximising the likelihood of observing the given sample path.
-        One can prove that they coincide with the empirical transition probabilities.
+        This method returns the maximum likelihood estimate.
+        One can prove that it coincides with the empirical transition probabilities.
 
         :type events: 1D array of int
         :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
