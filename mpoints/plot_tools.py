@@ -240,7 +240,7 @@ def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labe
     return f, fig_array
 
 def transition_probabilities(probabilities, shape=None, path='', fig_name='transition_probabilities.pdf',
-                             events_labels=None, states_labels=None, title=None, color_map=None, fig_size=(12, 6),
+                             events_labels=None, states_labels=None, title=None, color_map=None, figsize=(12, 6),
                              size_labels=16, size_values=14, bottom=0.1, top=0.95, left=0.08, right=0.92,
                              wspace=0.2, hspace=0.2,
                              savefig=False, usetex=False):
@@ -297,7 +297,7 @@ def transition_probabilities(probabilities, shape=None, path='', fig_name='trans
     else:
         v_size = shape[0]
         h_size = shape[1]
-    f, fig_array = plt.subplots(v_size, h_size, figsize=fig_size)
+    f, fig_array = plt.subplots(v_size, h_size, figsize=figsize)
     if title is not None:
         f.suptitle(title)
     for i in range(v_size):
