@@ -621,7 +621,6 @@ def sample_path(times, events, states, model, time_start, time_end, color_palett
     events = list(copy.copy(events[index_start:index_end]))
     states = list(copy.copy(states[index_start:index_end]))
     seaborn.set(style='darkgrid')
-    plt.figure()
     f, fig_array = plt.subplots(2, 1, sharex='col')
     'Plot the intensities'
     ax = fig_array[1]
