@@ -617,9 +617,9 @@ def sample_path(times, events, states, model, time_start, time_end, color_palett
     initial_state = 0
     if index_start > 0:
         initial_state = states[index_start-1]
-    times = copy.copy(times[index_start:index_end])
-    events = copy.copy(events[index_start:index_end])
-    states = copy.copy(states[index_start:index_end])
+    times = list(copy.copy(times[index_start:index_end]))
+    events = list(copy.copy(events[index_start:index_end]))
+    states = list(copy.copy(states[index_start:index_end]))
     seaborn.set(style='darkgrid')
     plt.figure()
     f, fig_array = plt.subplots(2, 1, sharex='col')
