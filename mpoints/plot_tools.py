@@ -526,7 +526,7 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
         order_max = np.ceil(np.log10(t_max))
         tt = np.logspace(order_min, order_max, num=npoints)
     else:
-        tt = np.linspace(tmin, tmax, num=npoints)
+        tt = np.linspace(t_min, t_max, num=npoints)
     norm_max = ymax
     if ymax is None:
         norm_max = np.max(np.divide(impact_coefficients, decay_coefficients)) * 1.05
