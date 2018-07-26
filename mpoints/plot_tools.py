@@ -352,7 +352,7 @@ def transition_probabilities(probabilities, shape=None, path='', fig_name='trans
         plt.savefig(entire_path)
     return f, fig_array
 
-def discrete_distribution(probabilities, path=os.getcwd(), fig_name='distribution_events_states.pdf', v_labels=None,
+def discrete_distribution(probabilities, path='', fig_name='distribution_events_states.pdf', v_labels=None,
                           h_labels=None, title=None, color_map=None, figsize=(12, 6), size_labels=16, size_values=14,
                           bottom=None, top=None, left=None, right=None, savefig=False, usetex=False):
     """
