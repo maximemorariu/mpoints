@@ -436,7 +436,8 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
                 fig_name='kernels.pdf', title=None, palette=None, figsize=(9, 7), size_labels=16,
                 size_values=14, size_legend=16, bottom=None, top=None, left=None, right=None, savefig=False,
                 fig_array=None, fig=None,
-                tmin=None, tmax=None, npoints=500, ymax=None, alpha=1, legend_pos=0, log_timescale=True):
+                tmin=None, tmax=None, npoints=500, ymax=None, alpha=1, legend_pos=0, log_timescale=True,
+                ls='-'):
     r"""
     Plots the kernels of a state-dependent Hawkes process.
     Here the kernels are assumed to be exponential, that is, :math:`k_{e'e}(t,x)=\alpha_{e'xe}\exp(-\beta_{e'xe}t)`.
@@ -502,7 +503,9 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
     :type legend_pos: int
     :param legend_pos: position of the legend in the array of figures.
     :type log_timescale: boolean
-    :param log_timescale: set to False to plot with a linear timescale.
+    :param log_timescale: set to False to plot with a linear timescale.g
+    :type ls: string
+    :param ls: the linestyle (see matplotlib).
     :rtype: Figure, array of Axes
     :return: the figure and array of figures (see matplotlib).
     """
@@ -546,7 +549,7 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
                 l = None
                 if np.shape(states_labels) != ():
                     l = states_labels[x]
-                axes.plot(tt, yy, color=palette[x], label=l, alpha=alpha)
+                axes.plot(tt, yy, color=palette[x], label=l, alpha=alpha, ls=ls)
             axes.tick_params(axis='both', which='major', labelsize=size_values)  # font size for tick labels
             if log_timescale:
                 axes.set_xscale('log')
