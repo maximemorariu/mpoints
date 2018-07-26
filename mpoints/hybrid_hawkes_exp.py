@@ -820,11 +820,15 @@ class HybridHawkesExp:
         return partial_sums
 
     def intensity_of_event(self, event_type, partial_sums):
-        """
-        Computes the intensity of events of type event_type for state-dependent Hawkes processes.
-        :param event_type: [int]
-        :param partial_sums: [array] the partial sums S_{e',x',e} at the considered time.
-        :return: [scalar]
+        r"""
+        Computes the intensity of events of type `event_type`, given the partial sums :math:`S_{e'xe}`.
+
+        :type event_type: int
+        :param event_type: the event type for which the intensity is computed.
+        :type partial_sums: 3D numpy array of float
+        :param partial_sums: the partial sums :math:`S_{e',x',e}` at the considered time.
+        :rtype: float
+        :return: the value of :math:`\lambda_e` at the considered time.
         """
         result = self.base_rates[event_type]
         for e in range(self.number_of_event_types):
@@ -833,10 +837,13 @@ class HybridHawkesExp:
         return result
 
     def intensities_of_events(self, partial_sums):
-        """
-        Returns the array of intensities of events.
-        :param partial_sums: [array] the partial sums S_{e',x',e} at the considered time.
-        :return: [array]
+        r"""
+        Computes the intensities, given the partial sums :math:`S_{e'xe}`.
+
+        :type partial_sums: 3D numpy array of float
+        :param partial_sums: the partial sums :math:`S_{e',x',e}` at the considered time.
+        :rtype: 1D numpy array of float
+        :return: the intensities, `array[e]` is the value of :math:`\lambda_e` at the considered time.
         """
         result = np.zeros(self.number_of_event_types)
         for e in range(self.number_of_event_types):
@@ -845,12 +852,17 @@ class HybridHawkesExp:
 
     @staticmethod
     def parameters_to_array(base_rates, impact_coefficients, decay_coefficients):
-        """
-        Puts all the model parameters into one dimensional array
-        :param base_rates:
-        :param impact_coefficients:
-        :param decay_coefficients:
-        :return:
+        r"""
+        Puts the model parameters :math:`(\nu, \alpha, \beta)` into a one dimensional array.
+
+        :type base_rates: 1D numpy array
+        :param base_rates: the collection :math:`(\nu_{e})`.
+        :type impact_coefficients: 3D numpy array
+        :param impact_coefficients: the collection :math:`(\alpha_{e'xe})`.
+        :type decay_coefficients: 3D numpy array
+        :param decay_coefficients: the collection :math:`(\beta_{e'xe})`.
+        :rtype: 1D numpy array
+        :return: the parameters put into a single 1D array.
         """
         s = np.shape(impact_coefficients)
         number_of_event_types_1 = s[0]
@@ -878,12 +890,30 @@ class HybridHawkesExp:
 
     @staticmethod
     def array_to_parameters(array, number_of_event_types_1, number_of_states, number_of_event_types_2=0):
-        """
-        Transforms a one dimensional array into the base rates, the impact coefficients and the decay coefficients.
-        :param array:
-        :param number_of_event_types:
-        :param number_of_states:
-        :return:
+        r"""
+        Retrieves the parameters :math:`(\nu, \alpha, \beta)` from a 1D array.
+        It is NOT assumed that the length of the 1st and 3rd dimensions of the arrays :math:`(\alpha_{e'xe})` and
+        :math:`(\beta_{e'xe})` are equal. For instance, in
+        :py:meth:`~mpoints.hybrid_hawkes_exp.HybridHawkesExp.log_likelihood_of_events_partial`,
+        only of subgroup of the parameters :math:`(\nu, \alpha, \beta)` are required.
+
+        :type array: 1D numpy array
+        :param array: an array containing the parameters :math:`(\nu, \alpha, \beta)`.
+        :type number_of_event_types_1: int
+        :param number_of_event_types_1: length of the first dimension of :math:`(\alpha_{e'xe})` and
+                                        :math:`(\beta_{e'xe})`.
+        :type number_of_states: int
+        :param number_of_states: number of possible states in the state-dependent Hawkes process,
+                                 length of the second dimension.
+        :type number_of_event_types_2: int
+        :param number_of_event_types_2: length of the third dimension of :math:`(\alpha_{e'xe})` and
+                                        :math:`(\beta_{e'xe})`. It is also the length of :math:`\nu`.
+                                        If set to zero, we assume that `array` contains ALL the parameters
+                                        and not only a subgroup, meaning that
+                                        1st and 3rd dimensions of the arrays :math:`(\alpha_{e'xe})` and
+                                        :math:`(\beta_{e'xe})` are equal.
+        :rtype: 1D numpy array, 3D numpy array, 3D numpy array
+        :return: the parameters :math:`(\nu, \alpha, \beta)`.
         """
         if number_of_event_types_2 == 0:
             number_of_event_types_2 = number_of_event_types_1
@@ -910,10 +940,14 @@ class HybridHawkesExp:
 
     @staticmethod
     def transition_matrix_to_string(transition_probabilities):
-        """
+        r"""
+        Transforms the transition probabilities :math:`\phi` to a string that can be printed in the console or a
+        text file.
 
-        :param transition_probabilities:
-        :return:
+        :type transition_probabilities: 3D numpy array
+        :param transition_probabilities: the transition probabilities :math:`\phi`.
+        :rtype: string
+        :return: sequence of transition probability matrices :math:`(\phi_e)`, one per event type `e`.
         """
         number_of_states = len(transition_probabilities)
         number_of_events = len(transition_probabilities[0])
@@ -930,31 +964,43 @@ class HybridHawkesExp:
 
     @staticmethod
     def impact_coefficients_to_string(impact_coefficients):
-        """
+        r"""
+        Transforms the impact coefficients :math:`\alpha` to a string that can be printed in the console or a text file.
 
-        :param impact_coefficients:
-        :return:
+        :type impact_coefficients: 3D numpy array
+        :param impact_coefficients: the impact coefficients :math:`\alpha`.
+        :rtype: string
+        :return: sequence of matrices :math:`(\alpha_{\cdot x \cdot})`, one per possible state `x`.
         """
         return HybridHawkesExp.transition_matrix_to_string(impact_coefficients)
 
     @staticmethod
     def decay_coefficients_to_string(decay_coefficients):
-        """
+        r"""
+        Transforms the decay coefficients :math:`\beta` to a string that can be printed in the console or a text file.
 
-        :param decay_coefficients:
-        :return:
+        :type decay_coefficients: 3D numpy array
+        :param decay_coefficients: the decay coefficients :math:`\beta`.
+        :rtype: string
+        :return: sequence of matrices :math:`(\beta_{\cdot x \cdot})`, one per possible state `x`.
         """
         return HybridHawkesExp.transition_matrix_to_string(decay_coefficients)
 
     @staticmethod
     def proportion_of_events_and_states(events, states, number_of_event_types, number_of_states):
-        """
+        r"""
+        Computes the empirical distribution of the events and states.
 
-        :param events:
-        :param states:
-        :param number_of_event_types:
-        :param number_of_states:
-        :return:
+        :type events: 1D numpy array of int
+        :param events: the sequence of event types, `events[n]` is the event type of the `n` th event.
+        :type states: 1D numpy array of int
+        :param states: the sequence of states, `states[n]` is the new state of the system following the `n` th event.
+        :type number_of_event_types: int
+        :param number_of_event_types: number of different event types.
+        :type number_of_states: int
+        :param number_of_states: number of possible states.
+        :rtype: 2D numpy array of float
+        :return: `array[e,x]` is the percentage of events of type `e` after which the state is `x`.
         """
         proportion_events_states = np.zeros((number_of_event_types, number_of_states))
         size = len(events)
@@ -963,14 +1009,15 @@ class HybridHawkesExp:
             x = states[n]
             proportion_events_states[e, x] += 1
         proportion_events_states =  np.divide(proportion_events_states, size)
-        proportion_events = np.sum(proportion_events_states, axis=1)
-        proportion_states = np.sum(proportion_events_states, axis=0)
-        return proportion_events, proportion_states, proportion_events_states
+        return proportion_events_states
 
     def generate_base_rates_labels(self):
-        """
+        r"""
+        Produces labels for the base rates :math:`\nu`.
+        This uses the events labels of the model.
 
-        :return:
+        :rtype: list of string
+        :return: `list[e]` returns a label for :math:`\nu_e`.
         """
         labels = []
         for e in range(self.number_of_event_types):
@@ -979,9 +1026,12 @@ class HybridHawkesExp:
         return labels
 
     def generate_impact_coefficients_labels(self):
-        """
+        r"""
+        Produces labels for the impact coefficients :math:`\alpha`.
+        This uses the events and states labels of the model.
 
-        :return:
+        :rtype: list of list of list of string
+        :return: `list[e', x, e]` returns a label for :math:`\alpha_{e'xe}`.
         """
         labels = []
         for e1 in range(self.number_of_event_types):
@@ -998,9 +1048,12 @@ class HybridHawkesExp:
         return labels
 
     def generate_decay_coefficients_labels(self):
-        """
+        r"""
+        Produces labels for the decay coefficients :math:`\beta`.
+        This uses the events and states labels of the model.
 
-        :return:
+        :rtype: list of list of list of string
+        :return: `list[e', x, e]` returns a label for :math:`\beta_{e'xe}`.
         """
         labels = []
         for e1 in range(self.number_of_event_types):
@@ -1017,9 +1070,13 @@ class HybridHawkesExp:
         return labels
 
     def generate_product_labels(self):
-        """
+        r"""
+        Produces labels for all the couples of events types and possible states.
+        This uses the events and states labels of the model.
 
-        :return:
+        :rtype: list of strings
+        :return: the label for the couple `(e, x)` is given by by `list[n]` where
+                 :math:`n = x + e \times \mbox{number_of_event_types}`.
         """
         r = []
         for e in self.events_labels:
