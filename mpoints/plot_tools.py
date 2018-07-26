@@ -76,6 +76,8 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
     # set empty model labels if no labels provided
     if model_labels==None:
         model_labels = [None]*n_models
+    if shape is None:
+        shape = (1, dim)
     v_size = shape[0]
     h_size = shape[1]
     seaborn.set()
