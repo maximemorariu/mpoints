@@ -186,7 +186,11 @@ class HybridHawkesExp:
                                     problems, where :math:`d_e` is the number of event types. When True, each problem
                                     is solved independently. In this case, the limit on the number of iterations
                                     or function evaluations is applied independently to each sub-problem.
-        :return:
+        :rtype: scipy.optimize.OptimizerResult, 1D numpy array, string
+        :return: The first object is the optimisation result and contains the maximum likelihood estimate along with
+                 additional information on the optimisation routine. The second object contains the initial guess
+                 that resulted in the highest likelihood after running the optimisation procedure.
+                 The third object indicates the nature of this initial guess ('random' or 'given').
         """
         'If not specified  by the user, set the default range for the random guesses of the decay coefficients'
         if min_decay_coefficient is None:
