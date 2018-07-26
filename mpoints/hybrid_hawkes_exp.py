@@ -140,7 +140,7 @@ class HybridHawkesExp:
     def estimate_hawkes_parameters(self, times, events, states, time_start, time_end, maximum_number_of_iterations=2000,
                                    method='TNC', parameters_lower_bound=10**(-6), parameters_upper_bound=None,
                                    given_guesses=[], number_of_random_guesses=1,
-                                   min_decay_coefficient=None, max_decay_coefficient=None, parallel_estimation=True):
+                                   min_decay_coefficient=0.5, max_decay_coefficient=100, parallel_estimation=True):
         r"""
         Estimates the parameters of the intensities (arrival rates) of events, i.e., :math:`(\nu, \alpha, \beta)`.
         Estimation if performed via maximum likelihood. This method uses the `scipy.minimize` library.
@@ -192,13 +192,6 @@ class HybridHawkesExp:
                  that resulted in the highest likelihood after running the optimisation procedure.
                  The third object indicates the nature of this initial guess ('random' or 'given').
         """
-        'If not specified  by the user, set the default range for the random guesses of the decay coefficients'
-        if min_decay_coefficient is None:
-            min_decay_coefficient = 0.05*np.ones((self.number_of_event_types, self.number_of_states,
-                                                  self.number_of_event_types))
-        if max_decay_coefficient is None:
-            max_decay_coefficient = 100*np.ones((self.number_of_event_types, self.number_of_states,
-                                                 self.number_of_event_types))
 
         'Generate additional random guesses of the parameters'
         guesses = copy.copy(given_guesses)
