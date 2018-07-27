@@ -17,7 +17,7 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
     :type residuals: list
     :param residuals: list of lists (one list of residuals per event type) or list of lists of lists when multiple models are compared (one list of lists per model).
     :type shape: (int, int)
-    :param shape: 2D-tuple (number of columns, number of rows), shape of the array of figures.
+    :param shape: 2D-tuple (number of rows, number of columns), shape of the array of figures.
     :type path: string
     :param path: where the figure is saved.
     :type fig_name: string
@@ -252,7 +252,7 @@ def transition_probabilities(probabilities, shape=None, path='', fig_name='trans
     :type probabilities: 3D array
     :param probabilities: the transition probabilities.
     :type shape: (int, int)
-    :param shape: 2D-tuple (number of columns, number of rows), shape of the array of figures.
+    :param shape: 2D-tuple (number of rows, number of columns), shape of the array of figures.
     :type path: string
     :param path: where the figure is saved.
     :type fig_name: string
