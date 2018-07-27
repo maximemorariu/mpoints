@@ -26,6 +26,7 @@ For additional mathematical details, please consult the :doc:`documentation </ap
 
    install
    tutorial
+   extension
    apidoc/mpoints
    references
    support
