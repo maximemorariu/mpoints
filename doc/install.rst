@@ -2,7 +2,7 @@
 Installation
 ============
 
-The package can be easily installed via pip, a popular package management system for Python. In the terminal, simply enter the following command.
+The package can be easily installed via `pip`, a popular package management system for Python. In the terminal, simply enter the following command.
 
 .. code-block:: bash
 
