@@ -2,13 +2,10 @@
 Installation
 ============
 
-At the command line::
-
-    easy_install crawler
-
-Or, if you have virtualenvwrapper installed:
+The package can be easily installed via pip, a popular package management system for Python. In the terminal, simply enter the following command.
 
 .. code-block:: bash
 
-    mkvirtualenv crawler
-    pip install crawler
+    pip install mpoints
+
+If you are using virtual environments (with conda), make sure that you install the package in the intended environment.
