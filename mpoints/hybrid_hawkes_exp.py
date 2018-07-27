@@ -1028,7 +1028,7 @@ class HybridHawkesExp:
         This uses the events and states labels of the model.
 
         :rtype: list of list of list of string
-        :return: `list[e', x, e]` returns a label for :math:`\alpha_{e'xe}`.
+        :return: `list[e'][x][e]` returns a label for :math:`\alpha_{e'xe}`.
         """
         labels = []
         for e1 in range(self.number_of_event_types):
@@ -1050,7 +1050,7 @@ class HybridHawkesExp:
         This uses the events and states labels of the model.
 
         :rtype: list of list of list of string
-        :return: `list[e', x, e]` returns a label for :math:`\beta_{e'xe}`.
+        :return: `list[e'][x][e]` returns a label for :math:`\beta_{e'xe}`.
         """
         labels = []
         for e1 in range(self.number_of_event_types):
