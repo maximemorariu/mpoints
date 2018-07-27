@@ -80,7 +80,6 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
         shape = (1, dim)
     v_size = shape[0]
     h_size = shape[1]
-    seaborn.set()
     if palette==None:
         palette = seaborn.color_palette('husl', n_models)
     f, fig_array = plt.subplots(v_size, h_size, figsize=figsize, sharex='col', sharey='row')
@@ -140,7 +139,7 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
 
 def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labels=None, model_labels=None,
                 palette=None, n_lags=50, figsize=(8, 6), size_labels=16, size_ticks=14, size_legend=16, bottom=None,
-                top=None, left=None, right=None,savefig=True):
+                top=None, left=None, right=None,savefig=False):
     """
     Correlogram of residuals.
 
@@ -192,8 +191,6 @@ def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labe
         model_labels = [None] * n_models
     v_size = dim
     h_size = dim
-    seaborn.set()
-    # seaborn.set_style('dark')  # no grid for good-looking small subplots
     if palette is None:
         palette = seaborn.color_palette('husl', n_models)
     f, fig_array = plt.subplots(v_size, h_size, figsize=figsize, sharex='col', sharey='row')
@@ -625,7 +622,6 @@ def sample_path(times, events, states, model, time_start, time_end, color_palett
     times = list(copy.copy(times[index_start:index_end]))
     events = list(copy.copy(events[index_start:index_end]))
     states = list(copy.copy(states[index_start:index_end]))
-    seaborn.set(style='darkgrid')
     f, fig_array = plt.subplots(2, 1, sharex='col')
     'Plot the intensities'
     ax = fig_array[1]
