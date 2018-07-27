@@ -6,6 +6,19 @@
 Package for state-dependent Hawkes processes
 ==============================================
 
+The `mpoints` package is a machine learning tool that implements the class of state-dependent Hawkes processes.
+Its key features include both simulation and estimation (statistical inference).
+It also contains a module with specialised plotting services.
+
+State-dependent Hawkes processes belong to the class of hybrid marked point processes,
+a class that models the arrival in time of random events and their interaction with the state of a system.
+
+We strongly recommend to first read the :doc:`tutorial </tutorial>`.
+It contains an introduction to this statistical model and illustrates the main functionalities of the `mpoints` package.
+
+For additional mathematical details, please consult the :doc:`documentation </apidoc/mpoints>` and the
+:doc:`references <\references>`.
+
 .. toctree::
    :numbered:
    :maxdepth: 2
@@ -14,6 +27,7 @@ Package for state-dependent Hawkes processes
    install
    tutorial
    apidoc/mpoints
+   references
    support
 
 
