@@ -20,8 +20,8 @@ sys.path.insert(0, '/Users/maximemorariu/Dropbox/Documents/PyCharm/Packages/mpoi
 # -- Project information -----------------------------------------------------
 
 project = 'mpoints'
-copyright = '2018, Maxime Morariu-Patrichi'
-author = 'Maxime Morariu-Patrichi'
+copyright = '2018, Maxime Morariu-Patrichi, Mikko Pakkanen'
+author = 'Maxime Morariu-Patrichi, Mikko Pakkanen'
 
 # The short X.Y version
 version = '0.1'
@@ -134,7 +134,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'mpoints.tex', 'mpoints Documentation',
-     'Maxime Morariu-Patrichi', 'manual'),
+     'Maxime Morariu-Patrichi, Mikko Pakkanen', 'manual'),
 ]
 
 
