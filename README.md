@@ -8,7 +8,7 @@ State-dependent Hawkes processes belong to the class of hybrid marked point proc
 a class that models the arrival in time of random events and their interaction with the state of a system.
 
 We strongly recommend to first read the tutorial.
-It contains an introduction to this statistical model and illustrates the main functionalities of the `mpoints` package.
+It contains an introduction to this statistical model and illustrates the main services offered by the `mpoints` package.
 
 For additional mathematical details, please consult the documentation and the references.
 
