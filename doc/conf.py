@@ -23,7 +23,8 @@ class Mock(MagicMock):
     def __getattr__(cls, name):
         return MagicMock()
 
-MOCK_MODULES = ['numpy', 'scipy.optimize', 'mpoints.hybrid_hawkes_exp_cython']
+MOCK_MODULES = ['numpy', 'scipy', 'scipy.optimize', 'mpoints.hybrid_hawkes_exp_cython',
+                'matplotlib', 'matplotlib.pyplot']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 # -- Project information -----------------------------------------------------
