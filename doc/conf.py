@@ -24,7 +24,7 @@ class Mock(MagicMock):
         return MagicMock()
 
 MOCK_MODULES = ['numpy', 'scipy', 'scipy.optimize', 'mpoints.hybrid_hawkes_exp_cython',
-                'matplotlib', 'matplotlib.pyplot', 'seaborn']
+                'matplotlib', 'matplotlib.pyplot', 'seaborn', 'statsmodels', 'matplotlib.colors']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 # -- Project information -----------------------------------------------------
