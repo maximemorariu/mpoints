@@ -14,7 +14,7 @@
 
 import os
 import sys
-sys.path.insert(0, '/Users/maximemorariu/Dropbox/Documents/PyCharm/Packages/mpoints')
+sys.path.insert(0, os.path.abspath('../'))
 
 from unittest.mock import MagicMock
 
