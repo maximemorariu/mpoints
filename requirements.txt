@@ -1,5 +1,5 @@
 sphinx>=1.4
 ipykernel
 nbsphinx
-autodod
+autodoc
 apidoc
