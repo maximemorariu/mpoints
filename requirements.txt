@@ -3,3 +3,4 @@ ipykernel
 nbsphinx
 autodoc
 apidoc
+matplotlib
