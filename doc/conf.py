@@ -25,7 +25,7 @@ class Mock(MagicMock):
 
 MOCK_MODULES = ['numpy', 'scipy', 'mpoints.hybrid_hawkes_exp_cython',
                 'mpoints.hybrid_hawkes_exp_cython.pyx', 'mpoints.hybrid_hawkes_exp_cython.so',
-                'mpoints.hybrid_hawkes_exp_cython.pyd']
+                'mpoints.hybrid_hawkes_exp_cython.pyd', 'hybrid_hawkes_exp_cython']
 sys.modules.update((mod_name, Mock()) for mod_name in MOCK_MODULES)
 
 # -- Project information -----------------------------------------------------
