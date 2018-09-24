@@ -10,7 +10,8 @@ a class that models the arrival in time of random events and their interaction w
 We strongly recommend to first read the [tutorial](https://mpoints.readthedocs.io/en/latest/tutorial.html).
 It contains an introduction to this statistical model and illustrates the main services offered by the `mpoints` package.
 
-For additional mathematical details, please consult the [documentation](https://mpoints.readthedocs.io) and the references.
+For additional mathematical details, please consult the [documentation](https://mpoints.readthedocs.io) and the 
+[references](https://mpoints.readthedocs.io/en/latest/references.html).
 
 ## Installation
 
