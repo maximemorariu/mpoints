@@ -133,8 +133,15 @@ class HybridHawkesExp:
             result[state_before, event, state_after] += 1
         for x1 in range(self.number_of_states):
             for e in range(self.number_of_event_types):
-                for x2 in range(self.number_of_states):
-                    result[x1, e, x2] /= count_of_states_events[x1, e]
+                size = count_of_states_events[x1, e]
+                if size > 0:
+                    for x2 in range(self.number_of_states):
+                        result[x1, e, x2] /= size
+                else:
+                    message = 'Warning: Transition probabilities from state ' + str(x1)
+                    message += ' when events of type ' + str(e) + ' occur cannot be estimated because'
+                    message += ' events of this type never occur this state'
+                    print(message)
         return result
 
     def estimate_hawkes_parameters(self, times, events, states, time_start, time_end, maximum_number_of_iterations=2000,
