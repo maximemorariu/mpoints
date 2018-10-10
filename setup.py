@@ -18,7 +18,7 @@ setuptools.setup(
     description="Simulate and estimate state-dependent Hawkes processes.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://www.maximemorariu.com",
+    url="https://mpoints.readthedocs.io",
     packages=setuptools.find_packages(),
     classifiers=(
         "Programming Language :: Python :: 3",
