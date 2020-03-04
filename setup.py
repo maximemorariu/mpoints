@@ -3,7 +3,7 @@ import numpy
 
 ext_module = setuptools.Extension('mpoints.hybrid_hawkes_exp_cython',
                                   sources=['mpoints/hybrid_hawkes_exp_cython.c'],
-                                  extra_compile_args=["-ffast-math"])
+                                  extra_compile_args=["-lm -ffast-math"])
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
