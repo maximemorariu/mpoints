@@ -1,9 +1,11 @@
+from typing import Optional, Sequence
 import numpy as np
 import math
 import copy
 import bisect
 import scipy.optimize as opt
 from . import hybrid_hawkes_exp_cython as cy
+
 
 class HybridHawkesExp:
     """
@@ -20,6 +22,7 @@ class HybridHawkesExp:
     :type states_labels: list of strings
     :param states_labels: names of the possible states.
     """
+
     def __init__(self, number_of_event_types, number_of_states, events_labels, states_labels):
         """
         Initialises an instance.
@@ -37,11 +40,15 @@ class HybridHawkesExp:
         self.number_of_states = number_of_states
         self.events_labels = events_labels
         self.states_labels = states_labels
-        self.transition_probabilities = np.zeros((number_of_states, number_of_event_types, number_of_states))
+        self.transition_probabilities = np.zeros(
+            (number_of_states, number_of_event_types, number_of_states))
         self.base_rates = np.zeros(number_of_event_types)
-        self.impact_coefficients = np.zeros((number_of_event_types, number_of_states, number_of_event_types))
-        self.decay_coefficients = np.zeros((number_of_event_types, number_of_states, number_of_event_types))
-        self.impact_decay_ratios = np.zeros((number_of_event_types, number_of_states, number_of_event_types))
+        self.impact_coefficients = np.zeros(
+            (number_of_event_types, number_of_states, number_of_event_types))
+        self.decay_coefficients = np.zeros(
+            (number_of_event_types, number_of_states, number_of_event_types))
+        self.impact_decay_ratios = np.zeros(
+            (number_of_event_types, number_of_states, number_of_event_types))
 
     def set_transition_probabilities(self, transition_probabilities):
         r"""
@@ -59,7 +66,8 @@ class HybridHawkesExp:
         'Raise ValueError if the given parameters do not have the right shape'
         if np.shape(transition_probabilities) != (self.number_of_states, self.number_of_event_types,
                                                   self.number_of_states):
-            raise ValueError('given transition probabilities have incorrect shape')
+            raise ValueError(
+                'given transition probabilities have incorrect shape')
         self.transition_probabilities = copy.copy(transition_probabilities)
 
     def set_hawkes_parameters(self, base_rates, impact_coefficients, decay_coefficients):
@@ -82,15 +90,16 @@ class HybridHawkesExp:
         if np.shape(base_rates) != (self.number_of_event_types,):
             raise ValueError('given base rates have incorrect shape')
         if np.shape(impact_coefficients) != (self.number_of_event_types, self.number_of_states,
-                                              self.number_of_event_types):
+                                             self.number_of_event_types):
             raise ValueError('given impact coefficients have incorrect shape')
         if np.shape(decay_coefficients) != (self.number_of_event_types, self.number_of_states,
-                                             self.number_of_event_types):
+                                            self.number_of_event_types):
             raise ValueError('given decay coefficients have incorrect shape')
         self.base_rates = copy.copy(base_rates)
         self.impact_coefficients = copy.copy(impact_coefficients)
         self.decay_coefficients = copy.copy(decay_coefficients)
-        self.impact_decay_ratios = np.divide(impact_coefficients, decay_coefficients)
+        self.impact_decay_ratios = np.divide(
+            impact_coefficients, decay_coefficients)
 
     @staticmethod
     def kernel_at_time(time, alpha, beta):
@@ -123,8 +132,10 @@ class HybridHawkesExp:
         :rtype: 3D array
         :return: the estimated transition probabilities :math:`\phi`.
         """
-        result = np.zeros((self.number_of_states, self.number_of_event_types, self.number_of_states))
-        count_of_states_events = np.zeros((self.number_of_states, self.number_of_event_types))
+        result = np.zeros(
+            (self.number_of_states, self.number_of_event_types, self.number_of_states))
+        count_of_states_events = np.zeros(
+            (self.number_of_states, self.number_of_event_types))
         for n in range(1, len(events)):
             event = events[n]
             state_before = states[n - 1]
@@ -138,8 +149,10 @@ class HybridHawkesExp:
                     for x2 in range(self.number_of_states):
                         result[x1, e, x2] /= size
                 else:
-                    message = 'Warning: Transition probabilities from state ' + str(x1)
-                    message += ' when events of type ' + str(e) + ' occur cannot be estimated because'
+                    message = 'Warning: Transition probabilities from state ' + \
+                        str(x1)
+                    message += ' when events of type ' + \
+                        str(e) + ' occur cannot be estimated because'
                     message += ' events of this type never occur this state'
                     print(message)
         return result
@@ -202,10 +215,12 @@ class HybridHawkesExp:
 
         'Generate additional random guesses of the parameters'
         guesses = copy.copy(given_guesses)
-        if np.shape(min_decay_coefficient) == ():  # if a scalar was given instead of a matrix
+        # if a scalar was given instead of a matrix
+        if np.shape(min_decay_coefficient) == ():
             min_decay_coefficients = min_decay_coefficient * np.ones((self.number_of_event_types, self.number_of_states,
                                                                       self.number_of_event_types))
-        if np.shape(max_decay_coefficient) == ():  # if a scalar was given instead of a matrix
+        # if a scalar was given instead of a matrix
+        if np.shape(max_decay_coefficient) == ():
             max_decay_coefficients = max_decay_coefficient * np.ones((self.number_of_event_types, self.number_of_states,
                                                                       self.number_of_event_types))
         if number_of_random_guesses > 0:
@@ -214,7 +229,8 @@ class HybridHawkesExp:
             for n in range(len(times)):
                 e = events[n]
                 average_intensities[e] += 1
-            average_intensities = np.divide(average_intensities, time_end - time_start)
+            average_intensities = np.divide(
+                average_intensities, time_end - time_start)
             for n in range(number_of_random_guesses):
                 'Base rates'
                 guess_base_rates = np.zeros(self.number_of_event_types)
@@ -226,8 +242,10 @@ class HybridHawkesExp:
                 for e1 in range(self.number_of_event_types):
                     for x in range(self.number_of_states):
                         for e2 in range(self.number_of_event_types):
-                            u_min = math.log10(min_decay_coefficients[e1, x, e2])
-                            u_max = math.log10(max_decay_coefficients[e1, x, e2])
+                            u_min = math.log10(
+                                min_decay_coefficients[e1, x, e2])
+                            u_max = math.log10(
+                                max_decay_coefficients[e1, x, e2])
                             u = np.random.uniform(u_min, u_max)
                             beta = 10 ** u
                             guess_decay_coefficients[e1, x, e2] = beta
@@ -249,15 +267,20 @@ class HybridHawkesExp:
         if not parallel_estimation:
             optimal_results = []
             for g in guesses:
-                dimension = self.number_of_event_types + 2 * self.number_of_states * self.number_of_event_types ** 2
-                bounds = [(parameters_lower_bound, parameters_upper_bound)] * dimension
+                dimension = self.number_of_event_types + 2 * \
+                    self.number_of_states * self.number_of_event_types ** 2
+                bounds = [(parameters_lower_bound,
+                           parameters_upper_bound)] * dimension
                 'Define the minus likelihood and gradient functions'
                 def likelihood_minus(parameters):
                     result = - self.log_likelihood_of_events(parameters, times, events, states,
                                                              time_start, time_end)
                     return result
+
                 def gradient_of_likelihood_minus(parameters):
-                    result = - self.gradient(parameters, times, events, states, time_start, time_end)
+                    result = - \
+                        self.gradient(parameters, times, events,
+                                      states, time_start, time_end)
                     return result
                 o = opt.minimize(likelihood_minus, g, method=method,
                                  bounds=bounds, jac=gradient_of_likelihood_minus,
@@ -281,14 +304,19 @@ class HybridHawkesExp:
             return optimal_results[index_of_best_result], best_initial_guess, kind_of_best_initial_guess
         else:
             dimension = 1 + 2 * self.number_of_states * self.number_of_event_types
-            bounds = [(parameters_lower_bound, parameters_upper_bound)] * dimension
+            bounds = [(parameters_lower_bound,
+                       parameters_upper_bound)] * dimension
             opt_nus = np.zeros(self.number_of_event_types)
-            opt_alphas = np.zeros((self.number_of_event_types, self.number_of_states, self.number_of_event_types))
-            opt_betas = np.zeros((self.number_of_event_types, self.number_of_states, self.number_of_event_types))
+            opt_alphas = np.zeros(
+                (self.number_of_event_types, self.number_of_states, self.number_of_event_types))
+            opt_betas = np.zeros(
+                (self.number_of_event_types, self.number_of_states, self.number_of_event_types))
             best_guess_nu = np.zeros(self.number_of_event_types)
             best_guess_alphas =\
-                np.zeros((self.number_of_event_types, self.number_of_states, self.number_of_event_types))
-            best_guess_betas = np.zeros((self.number_of_event_types, self.number_of_states, self.number_of_event_types))
+                np.zeros((self.number_of_event_types,
+                         self.number_of_states, self.number_of_event_types))
+            best_guess_betas = np.zeros(
+                (self.number_of_event_types, self.number_of_states, self.number_of_event_types))
             success = True
             successes = []
             status = -999
@@ -307,8 +335,11 @@ class HybridHawkesExp:
                     result = - self.log_likelihood_of_events_partial(e, parameters, times, events, states,
                                                                      time_start, time_end)
                     return result
+
                 def gradient_of_likelihood_minus(parameters):
-                    result = - self.gradient_partial(e, parameters, times, events, states,time_start, time_end)
+                    result = - \
+                        self.gradient_partial(
+                            e, parameters, times, events, states, time_start, time_end)
                     return result
                 'For each initial guess, optimise likelihood'
                 optimal_results = []
@@ -317,8 +348,9 @@ class HybridHawkesExp:
                                                                                     self.number_of_states,
                                                                                     self.number_of_event_types)
                     g_partial = self.parameters_to_array(guess_nus[e:e+1],
-                                                         guess_alphas[:,:,e:e+1],
-                                                         guess_betas[:,:,e:e+1])
+                                                         guess_alphas[:,
+                                                                      :, e:e+1],
+                                                         guess_betas[:, :, e:e+1])
                     o = opt.minimize(likelihood_minus, g_partial, method=method,
                                      bounds=bounds, jac=gradient_of_likelihood_minus,
                                      options={'maxiter': maximum_number_of_iterations})
@@ -341,16 +373,17 @@ class HybridHawkesExp:
                 # Save the kind of best initial guess for this event type
                 kinds_of_best_initial_guesses += kind_of_best_initial_guess + ' '
                 # Save optimal parameters
-                v, a, b = self.array_to_parameters(o.x, self.number_of_event_types, self.number_of_states, 1)
+                v, a, b = self.array_to_parameters(
+                    o.x, self.number_of_event_types, self.number_of_states, 1)
                 opt_nus[e:e+1] = v
-                opt_alphas[:,:,e:e+1] = a
-                opt_betas[:,:,e:e+1] = b
+                opt_alphas[:, :, e:e+1] = a
+                opt_betas[:, :, e:e+1] = b
                 # Save best initial guess
                 v, a, b = self.array_to_parameters(best_initial_guess, self.number_of_event_types,
                                                    self.number_of_states, self.number_of_event_types)
                 best_guess_nu[e] = v[e]
-                best_guess_alphas[:,:,e] = a[:,:,e]
-                best_guess_betas[:,:,e] = b[:,:,e]
+                best_guess_alphas[:, :, e] = a[:, :, e]
+                best_guess_betas[:, :, e] = b[:, :, e]
                 # Save optimiser information
                 successes.append(o.success)
                 statuses.append(o.status)
@@ -363,7 +396,8 @@ class HybridHawkesExp:
                 nfev += o.nfev
                 nit += o.nit
             'Aggregate the Optimize Results into a single one'
-            best_initial_guess = self.parameters_to_array(best_guess_nu, best_guess_alphas, best_guess_betas)
+            best_initial_guess = self.parameters_to_array(
+                best_guess_nu, best_guess_alphas, best_guess_betas)
             o = opt.OptimizeResult()
             x = self.parameters_to_array(opt_nus, opt_alphas, opt_betas)
             o['x'] = x
@@ -409,7 +443,8 @@ class HybridHawkesExp:
         :return: the `e` th element of the list is the sequence :math:`(r^e_n)` corresponding to the event type `e`.
         """
         # Check if no initial partial sums if given
-        s = np.zeros((self.number_of_event_types, self.number_of_states, self.number_of_event_types))
+        s = np.zeros((self.number_of_event_types,
+                     self.number_of_states, self.number_of_event_types))
         if len(np.shape(initial_partial_sums)) != 0:
             s = initial_partial_sums
             s = np.divide(s, self.decay_coefficients)
@@ -425,7 +460,7 @@ class HybridHawkesExp:
                                            s)
 
     def compute_total_residuals(self, times, events, states, time_start, initial_partial_sums=0,
-                                initial_state = 0):
+                                initial_state=0):
         r"""
 
         Computes the total residuals :math:`r^{ex}_n` defined by
@@ -455,7 +490,8 @@ class HybridHawkesExp:
         :return: the sequence :math:`(r^{ex}_n)` is the `x` + `e` * `number_of_states` th element in the list.
         """
         # Check if no initial partial sums if given
-        s = np.zeros((self.number_of_event_types, self.number_of_states, self.number_of_event_types))
+        s = np.zeros((self.number_of_event_types,
+                     self.number_of_states, self.number_of_event_types))
         if len(np.shape(initial_partial_sums)) != 0:
             s = initial_partial_sums
             s = np.divide(s, self.decay_coefficients)
@@ -472,8 +508,15 @@ class HybridHawkesExp:
                                           s,
                                           initial_state)
 
-    def simulate(self, time_start, time_end, initial_condition_times=[], initial_condition_events=[],
-                 initial_condition_states=[], initial_partial_sums=0, initial_state=0, max_number_of_events=10**6):
+    def simulate(self,
+                 time_start: float,
+                 time_end: float,
+                 initial_condition_times: Optional[Sequence] = None,
+                 initial_condition_events: Optional[Sequence] = None,
+                 initial_condition_states: Optional[Sequence] = None,
+                 initial_partial_sums: Optional[np.array] = None,
+                 initial_state: int = 0,
+                 max_number_of_events: int = 10**6):
         """
         Simulates a sample path of the state-dependent Hawkes process.
         The methods wraps a C implementation that was obtained via Cython.
@@ -501,20 +544,50 @@ class HybridHawkesExp:
                  each event. Note that these include the initial condition as well.
         """
         # Check if no initial partial sums if given
-        s = np.zeros((self.number_of_event_types, self.number_of_states, self.number_of_event_types))
-        if len(np.shape(initial_partial_sums))!=0:
-            s = initial_partial_sums
+        if initial_partial_sums is None:
+            s = np.zeros((self.number_of_event_types,
+                         self.number_of_states, self.number_of_event_types))
+        elif isinstance(initial_partial_sums, (int, float)):
+            s = initial_partial_sums * np.ones((self.number_of_event_types,
+                                                self.number_of_states,
+                                                self.number_of_event_types), dtype=float)
+        else:
+            assert isinstance(initial_partial_sums, np.ndarray)
+            assert initial_partial_sums.shape == (
+                self.number_of_event_types, self.number_of_states, self.number_of_event_types)
+            s = np.array(initial_partial_sums, dtype=float)
         # Convert the initial condition to np.arrays if required
-        if type(initial_condition_times)!=np.ndarray:
-            initial_condition_times = np.asarray(initial_condition_times, dtype=np.float)
-        if type(initial_condition_events)!=np.ndarray:
-            initial_condition_events = np.asarray(initial_condition_events, dtype=np.int)
-        if type(initial_condition_states)!=np.ndarray:
-            initial_condition_states = np.asarray(initial_condition_states, dtype=np.int)
-        return cy.simulate(self.number_of_event_types, self.number_of_states, self.base_rates, self.impact_coefficients,
-                           self.decay_coefficients, self.transition_probabilities, initial_condition_times,
-                           initial_condition_events, initial_condition_states, s, initial_state,
-                           time_start, time_end, max_number_of_events)
+        if initial_condition_times is None:
+            initial_condition_times = np.array([], dtype=float)
+        elif not isinstance(initial_condition_times, np.ndarray):
+            initial_condition_times = np.asarray(
+                initial_condition_times, dtype=float)
+        if initial_condition_events is None:
+            initial_condition_events = np.array([], dtype=int)
+        elif not isinstance(initial_condition_events, np.ndarray):
+            initial_condition_events = np.asarray(
+                initial_condition_events, dtype=int)
+        if initial_condition_states is None:
+            initial_condition_states = np.array([], dtype=int)
+        elif not isinstance(initial_condition_states, np.ndarray):
+            initial_condition_states = np.asarray(
+                initial_condition_states, dtype=int)
+        return cy.simulate(
+            self.number_of_event_types,
+            self.number_of_states,
+            self.base_rates,
+            self.impact_coefficients,
+            self.decay_coefficients,
+            self.transition_probabilities,
+            initial_condition_times,
+            initial_condition_events,
+            initial_condition_states,
+            s,
+            initial_state,
+            time_start,
+            time_end,
+            max_number_of_events
+        )
 
     'Likelihood and gradient'
 
@@ -553,9 +626,10 @@ class HybridHawkesExp:
         number_of_event_types = self.number_of_event_types
         number_of_states = self.number_of_states
         base_rates, impact_coefficients, decay_coefficients = \
-            HybridHawkesExp.array_to_parameters(parameters, self.number_of_event_types, self.number_of_states)
+            HybridHawkesExp.array_to_parameters(
+                parameters, self.number_of_event_types, self.number_of_states)
         return cy.log_likelihood_of_events(base_rates, impact_coefficients, decay_coefficients, number_of_event_types,
-                             number_of_states, times, events, states, np.float(time_start), np.float(time_end))
+                                           number_of_states, times, events, states, float(time_start), float(time_end))
 
     def gradient(self, parameters, times, events, states, time_start, time_end):
         r"""
@@ -585,10 +659,11 @@ class HybridHawkesExp:
         number_of_event_types = self.number_of_event_types
         number_of_states = self.number_of_states
         base_rates, impact_coefficients, decay_coefficients = \
-            HybridHawkesExp.array_to_parameters(parameters, self.number_of_event_types, self.number_of_states)
+            HybridHawkesExp.array_to_parameters(
+                parameters, self.number_of_event_types, self.number_of_states)
         g_base_rates, g_impact_coefficients, g_decay_coefficients =\
             cy.gradient(base_rates, impact_coefficients, decay_coefficients, number_of_event_types,
-                             number_of_states, times, events, states, np.float(time_start), np.float(time_end))
+                        number_of_states, times, events, states, float(time_start), float(time_end))
         return self.parameters_to_array(g_base_rates, g_impact_coefficients, g_decay_coefficients)
 
     def log_likelihood_of_events_partial(self, event_type, parameters, times, events, states, time_start, time_end):
@@ -631,11 +706,12 @@ class HybridHawkesExp:
         number_of_event_types = self.number_of_event_types
         number_of_states = self.number_of_states
         base_rate, impact_coefficients, decay_coefficients = \
-            HybridHawkesExp.array_to_parameters(parameters, number_of_event_types, number_of_states, 1)
-        return cy.log_likelihood_of_events_partial(event_type, np.float(base_rate[0]), impact_coefficients[:,:,0],
-                                                   decay_coefficients[:,:,0],
+            HybridHawkesExp.array_to_parameters(
+                parameters, number_of_event_types, number_of_states, 1)
+        return cy.log_likelihood_of_events_partial(event_type, float(base_rate[0]), impact_coefficients[:, :, 0],
+                                                   decay_coefficients[:, :, 0],
                                                    number_of_event_types, number_of_states, times, events, states,
-                                                   np.float(time_start), np.float(time_end))
+                                                   float(time_start), float(time_end))
 
     def gradient_partial(self, event_type, parameters, times, events, states, time_start, time_end):
         r"""
@@ -669,11 +745,12 @@ class HybridHawkesExp:
         number_of_event_types = self.number_of_event_types
         number_of_states = self.number_of_states
         base_rate, impact_coefficients, decay_coefficients = \
-            HybridHawkesExp.array_to_parameters(parameters, number_of_event_types, number_of_states, 1)
+            HybridHawkesExp.array_to_parameters(
+                parameters, number_of_event_types, number_of_states, 1)
         g_base_rate, g_impact_coefficients, g_decay_coefficients = \
-            cy.gradient_partial(event_type, np.float(base_rate[0]), impact_coefficients[:,:,0], decay_coefficients[:,:,0],
-                        number_of_event_types,
-                        number_of_states, times, events, states, np.float(time_start), np.float(time_end))
+            cy.gradient_partial(event_type, float(base_rate[0]), impact_coefficients[:, :, 0], decay_coefficients[:, :, 0],
+                                number_of_event_types,
+                                number_of_states, times, events, states, float(time_start), float(time_end))
         a = np.zeros((number_of_event_types, number_of_states, 1))
         b = np.zeros((number_of_event_types, number_of_states, 1))
         a[:, :, 0] = g_impact_coefficients
@@ -702,14 +779,18 @@ class HybridHawkesExp:
                  `array2[e,n]` is the intensity of events of type `e` at time `array1[n]`.
         """
         'Start/end time and first index of event times'
-        time_start = compute_times[0]  # time at which we start to compute the intensity
+        # time at which we start to compute the intensity
+        time_start = compute_times[0]
         time_end = compute_times[-1]
-        next_event_time_index = bisect.bisect_right(times, time_start)  # first event time occurring in between
+        next_event_time_index = bisect.bisect_right(
+            times, time_start)  # first event time occurring in between
         next_event_time = time_end + 1  # in case there is no event after 'time_start'
-        if next_event_time_index < len(times):  # i.e. there is an event time after
+        # i.e. there is an event time after
+        if next_event_time_index < len(times):
             next_event_time = times[next_event_time_index]
         '''Initialise the partial sums S_{e',x',e} that will allow use to compute the intensity recursively'''
-        partial_sums = np.zeros((self.number_of_event_types, self.number_of_states, self.number_of_event_types))
+        partial_sums = np.zeros(
+            (self.number_of_event_types, self.number_of_states, self.number_of_event_types))
         for n in range(next_event_time_index):
             time = times[n]
             event = events[n]
@@ -717,7 +798,8 @@ class HybridHawkesExp:
             for e in range(self.number_of_event_types):
                 alpha = self.impact_coefficients[event, state, e]
                 beta = self.decay_coefficients[event, state, e]
-                partial_sums[event, state, e] += alpha * math.exp(-beta * (time_start - time))
+                partial_sums[event, state, e] += alpha * \
+                    math.exp(-beta * (time_start - time))
         'Create aggregated sequence of times, events, and states (event times + compute times)'
         times_aggregated = []
         events_aggregated = []
@@ -725,7 +807,8 @@ class HybridHawkesExp:
         for t in compute_times:
             if t < next_event_time:
                 times_aggregated.append(t)
-                events_aggregated.append(-1)  # -1 means that it is not an event time
+                # -1 means that it is not an event time
+                events_aggregated.append(-1)
                 states_aggregated.append(-1)
             elif t > next_event_time:
                 while next_event_time < t:
@@ -741,7 +824,8 @@ class HybridHawkesExp:
                     states_aggregated.append(state)
                     next_event_time_index += 1
                     next_event_time = time_end + 1  # in case there is no event after 'time_start'
-                    if next_event_time_index < len(times):  # i.e. there is an event time after
+                    # i.e. there is an event time after
+                    if next_event_time_index < len(times):
                         next_event_time = times[next_event_time_index]
                 'Now add the time t'
                 times_aggregated.append(t)
@@ -749,7 +833,8 @@ class HybridHawkesExp:
                 states_aggregated.append(-1)
         'Compute the intensities at the aggregated times'
         number_of_times = len(times_aggregated)
-        result_intensities = np.zeros((self.number_of_event_types, number_of_times))
+        result_intensities = np.zeros(
+            (self.number_of_event_types, number_of_times))
         intensities = self.intensities_of_events(partial_sums)
         for e in range(self.number_of_event_types):
             result_intensities[e, 0] = intensities[e]
@@ -762,7 +847,8 @@ class HybridHawkesExp:
                     for x in range(self.number_of_states):
                         for e2 in range(self.number_of_event_types):
                             beta = self.decay_coefficients[e1, x, e2]
-                            partial_sums[e1, x, e2] *= math.exp(-beta * time_increment)
+                            partial_sums[e1, x,
+                                         e2] *= math.exp(-beta * time_increment)
             'Update partial sums: impact of new event'
             if event >= 0:
                 state = states_aggregated[n]
@@ -809,13 +895,15 @@ class HybridHawkesExp:
         :return: the partial sums, `array[e', x, e]` corresponds to :math:`S_{e'x'e}`.
         """
         'Compute contribution of the given events'
-        partial_sums = np.zeros((self.number_of_event_types, self.number_of_states, self.number_of_event_types))
+        partial_sums = np.zeros(
+            (self.number_of_event_types, self.number_of_states, self.number_of_event_types))
         index_end = bisect.bisect_right(times, time_end)
         for n in range(index_end):
             time = times[n]
             event = events[n]
             state = states[n]
-            partial_sums[event, state, :] += np.exp(- self.decay_coefficients[event, state, :] * (time_end - time))
+            partial_sums[event, state,
+                         :] += np.exp(- self.decay_coefficients[event, state, :] * (time_end - time))
         partial_sums = np.multiply(partial_sums, self.impact_coefficients)
         'Add contribution of the given initial condition'
         if np.shape(initial_partial_sums) != () and time_initial_condition != None:
@@ -873,13 +961,15 @@ class HybridHawkesExp:
         number_of_states = s[1]
         number_of_event_types_2 = s[2]
         result =\
-            np.zeros(number_of_event_types_2 + 2 * number_of_event_types_1 * number_of_event_types_2 * number_of_states)
+            np.zeros(number_of_event_types_2 + 2 * number_of_event_types_1 *
+                     number_of_event_types_2 * number_of_states)
         for n in range(number_of_event_types_2):
             result[n] = base_rates[n]
         for i in range(number_of_event_types_1):
             for j in range(number_of_states):
                 for k in range(number_of_event_types_2):
-                    index = number_of_event_types_2 + j * number_of_event_types_1 * number_of_event_types_2
+                    index = number_of_event_types_2 + j * \
+                        number_of_event_types_1 * number_of_event_types_2
                     index += i * number_of_event_types_2 + k
                     result[index] = impact_coefficients[i, j, k]
         for i in range(number_of_event_types_1):
@@ -924,14 +1014,17 @@ class HybridHawkesExp:
         base_rates = np.zeros(number_of_event_types_2)
         for n in range(number_of_event_types_2):
             base_rates[n] = array[n]
-        impact_coefficients = np.zeros((number_of_event_types_1, number_of_states, number_of_event_types_2))
+        impact_coefficients = np.zeros(
+            (number_of_event_types_1, number_of_states, number_of_event_types_2))
         for i in range(number_of_event_types_1):
             for j in range(number_of_states):
                 for k in range(number_of_event_types_2):
-                    index = number_of_event_types_2 + j * number_of_event_types_1 * number_of_event_types_2
+                    index = number_of_event_types_2 + j * \
+                        number_of_event_types_1 * number_of_event_types_2
                     index += i * number_of_event_types_2 + k
                     impact_coefficients[i, j, k] = array[index]
-        decay_coefficients = np.zeros((number_of_event_types_1, number_of_states, number_of_event_types_2))
+        decay_coefficients = np.zeros(
+            (number_of_event_types_1, number_of_states, number_of_event_types_2))
         for i in range(number_of_event_types_1):
             for j in range(number_of_states):
                 for k in range(number_of_event_types_2):
@@ -1006,13 +1099,14 @@ class HybridHawkesExp:
         :rtype: 2D numpy array of float
         :return: `array[e,x]` is the percentage of events of type `e` after which the state is `x`.
         """
-        proportion_events_states = np.zeros((number_of_event_types, number_of_states))
+        proportion_events_states = np.zeros(
+            (number_of_event_types, number_of_states))
         size = len(events)
         for n in range(size):
             e = events[n]
             x = states[n]
             proportion_events_states[e, x] += 1
-        proportion_events_states =  np.divide(proportion_events_states, size)
+        proportion_events_states = np.divide(proportion_events_states, size)
         return proportion_events_states
 
     def generate_base_rates_labels(self):

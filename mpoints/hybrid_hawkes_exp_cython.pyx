@@ -7,10 +7,10 @@ from libc.math cimport exp
 from libc.math cimport log
 # from libc.stdlib cimport rand, RAND_MAX, srand
 
-DTYPEf = np.float
-DTYPEi = np.int
-ctypedef np.float_t DTYPEf_t
-ctypedef np.int_t DTYPEi_t
+DTYPEf = np.float64
+DTYPEi = np.int64
+ctypedef np.float64_t DTYPEf_t
+ctypedef np.int64_t DTYPEi_t
 
 def log_likelihood_of_events(np.ndarray[DTYPEf_t, ndim=1] base_rates,
                              np.ndarray[DTYPEf_t, ndim=3] impact_coefficients,
@@ -20,8 +20,8 @@ def log_likelihood_of_events(np.ndarray[DTYPEf_t, ndim=1] base_rates,
                              np.ndarray[DTYPEf_t, ndim=1] times,
                              np.ndarray[DTYPEi_t, ndim=1] events,
                              np.ndarray[DTYPEi_t, ndim=1] states,
-                             np.float time_start,
-                             np.float time_end):
+                             double time_start,
+                             double time_end):
     """
     Computes the log-likelihood of events.
     :param parameters: [array] 1-D array of parameters (base rates, impact coefficients, decay coefficients)
@@ -36,7 +36,7 @@ def log_likelihood_of_events(np.ndarray[DTYPEf_t, ndim=1] base_rates,
     cdef np.ndarray[DTYPEf_t, ndim=3] partial_sums = np.zeros((number_of_event_types, number_of_states, number_of_event_types), dtype=DTYPEf)
     cdef int n, event, state, e, e1, x, e2, index_end
     cdef double time, previous_time, intensity_of_the_event
-    cdef DTYPEf_t alpha, beta, ratio, time_increment, time_increment_2
+    cdef double alpha, beta, ratio, time_increment, time_increment_2
     # events at and before this time are treated as an initial condition
     index_start = bisect.bisect_right(times, time_start)
     # saving the ratios of impact and decay coefficients will be useful
@@ -103,7 +103,7 @@ def log_likelihood_of_events(np.ndarray[DTYPEf_t, ndim=1] base_rates,
     return log_likelihood
 
 def log_likelihood_of_events_partial(int event_type,
-                             np.float base_rate,
+                             double base_rate,
                              np.ndarray[DTYPEf_t, ndim=2] impact_coefficients,
                              np.ndarray[DTYPEf_t, ndim=2] decay_coefficients,
                              int number_of_event_types,
@@ -111,8 +111,8 @@ def log_likelihood_of_events_partial(int event_type,
                              np.ndarray[DTYPEf_t, ndim=1] times,
                              np.ndarray[DTYPEi_t, ndim=1] events,
                              np.ndarray[DTYPEi_t, ndim=1] states,
-                             np.float time_start,
-                             np.float time_end):
+                             double time_start,
+                             double time_end):
     """
     Computes the log-likelihood associated to a single event type (the full log-likelihood is the sum of the partial log-likelihoods).
     :param parameters: [array] 1-D array of parameters (base rate, impact coefficients, decay coefficients)
@@ -127,7 +127,7 @@ def log_likelihood_of_events_partial(int event_type,
     cdef np.ndarray[DTYPEf_t, ndim=2] partial_sums = np.zeros((number_of_event_types, number_of_states), dtype=DTYPEf)
     cdef int n, event, state, e, e1, x, index_end
     cdef double time, previous_time, intensity_of_the_event
-    cdef DTYPEf_t alpha, beta, ratio, time_increment, time_increment_2
+    cdef double alpha, beta, ratio, time_increment, time_increment_2
     # events at and before this time are treated as an initial condition
     index_start = bisect.bisect_right(times, time_start)
     # saving the ratios of impact and decay coefficients will be useful
@@ -195,8 +195,8 @@ def gradient(np.ndarray[DTYPEf_t, ndim=1] base_rates,
              np.ndarray[DTYPEf_t, ndim=1] times,
              np.ndarray[DTYPEi_t, ndim=1] events,
              np.ndarray[DTYPEi_t, ndim=1] states,
-             np.float time_start,
-             np.float time_end):
+             double time_start,
+             double time_end):
     """
     Computes the gradient of the log-likelihood of events.
     :param parameters:
@@ -210,7 +210,7 @@ def gradient(np.ndarray[DTYPEf_t, ndim=1] base_rates,
     cdef int index_start
     cdef int n, event, state, e, e1, x, e2, index_end
     cdef double time, previous_time
-    cdef DTYPEf_t alpha, beta, ratio, time_increment, time_increment_2, sample_duration, a, b, c, decay, intensity_of_the_event
+    cdef double alpha, beta, ratio, time_increment, time_increment_2, sample_duration, a, b, c, decay, intensity_of_the_event
     # initialise the gradient vectors
     sample_duration = time_end - time_start
     cdef np.ndarray[DTYPEf_t, ndim=1] gradient_base_rates = np.zeros(number_of_event_types)
@@ -304,7 +304,7 @@ def gradient(np.ndarray[DTYPEf_t, ndim=1] base_rates,
     return gradient_base_rates, gradient_impact_coefficients, gradient_decay_coefficients
 
 def gradient_partial(int event_type,
-             np.float base_rate,
+             double base_rate,
              np.ndarray[DTYPEf_t, ndim=2] impact_coefficients,
              np.ndarray[DTYPEf_t, ndim=2] decay_coefficients,
              int number_of_event_types,
@@ -312,8 +312,8 @@ def gradient_partial(int event_type,
              np.ndarray[DTYPEf_t, ndim=1] times,
              np.ndarray[DTYPEi_t, ndim=1] events,
              np.ndarray[DTYPEi_t, ndim=1] states,
-             np.float time_start,
-             np.float time_end):
+             double time_start,
+             double time_end):
     """
     Computes the gradient of the log-likelihood of events, only with respect to the parameters that contribute to the intensity of the given event type.
     :param parameters:
@@ -324,13 +324,14 @@ def gradient_partial(int event_type,
     :param time_end:
     :return:
     """
+    assert base_rate > 0.
     cdef int index_start
     cdef int n, event, state, e, e1, x, e2, index_end
     cdef double time, previous_time
-    cdef DTYPEf_t alpha, beta, ratio, time_increment, time_increment_2, sample_duration, a, b, c, decay, intensity_of_the_event
+    cdef double alpha, beta, ratio, time_increment, time_increment_2, sample_duration, a, b, c, decay, intensity_of_the_event
     # initialise the gradient vectors
     sample_duration = time_end - time_start
-    cdef np.float gradient_base_rate
+    cdef double gradient_base_rate
     gradient_base_rate = - sample_duration
     cdef np.ndarray[DTYPEf_t, ndim=2] gradient_impact_coefficients =\
         np.zeros((number_of_event_types, number_of_states))
@@ -397,7 +398,8 @@ def gradient_partial(int event_type,
             for e in range(number_of_event_types):
                 for x in range(number_of_states):
                     alpha = impact_coefficients[e, x]
-                    gradient_impact_coefficients[e, x] += (partial_sums[e, x] / alpha) / intensity_of_the_event
+                    if alpha > 0.:
+                        gradient_impact_coefficients[e, x] += (partial_sums[e, x] / alpha) / intensity_of_the_event
                     gradient_decay_coefficients[e, x] -= partial_sums_1[e, x] / intensity_of_the_event
         'Update the partial sums: impact of the new event'
         alpha = impact_coefficients[event, state]
@@ -425,8 +427,8 @@ def simulate(int number_of_event_types,
              np.ndarray[DTYPEi_t, ndim=1] initial_condition_states,
              np.ndarray[DTYPEf_t, ndim=3] initial_partial_sums,
              int initial_state,
-             DTYPEf_t time_start,
-             DTYPEf_t time_end,
+             double time_start,
+             double time_end,
              int max_number_of_events):
     """
     Simulates a state-dependent Hawkes process with exponential kernels.
@@ -437,7 +439,7 @@ def simulate(int number_of_event_types,
     '''Initialise the partial sums S_{e',x',e} that will allow us to compute the intensity recursively'''
     cdef int number_of_initial_events = initial_condition_times.shape[0]
     cdef np.ndarray[DTYPEf_t, ndim=3] partial_sums = np.zeros((number_of_event_types, number_of_states, number_of_event_types), dtype=DTYPEf)
-    cdef DTYPEf_t time, alpha, beta
+    cdef double time, alpha, beta
     cdef int n, event, state, e, e1, e2, x
     for n in range(number_of_initial_events):
         time = initial_condition_times[n]
@@ -455,7 +457,7 @@ def simulate(int number_of_event_types,
     
     'Compute the initial intensities of events and the total intensity'
     cdef np.ndarray[DTYPEf_t, ndim=1] intensities = np.zeros(number_of_event_types, dtype=DTYPEf)
-    cdef DTYPEf_t intensity_max = 0
+    cdef double intensity_max = 0
     for e2 in range(number_of_event_types):
         intensities[e2] = base_rates[e2]
         for e1 in range(number_of_event_types):
@@ -480,9 +482,9 @@ def simulate(int number_of_event_types,
     result_events[0:number_of_initial_events] = initial_condition_events
     result_states[0:number_of_initial_events] = initial_condition_states
     time = time_start
-    cdef DTYPEf_t random_exponential, random_uniform, intensity_total
+    cdef double random_exponential, random_uniform, intensity_total
     cdef np.ndarray[DTYPEf_t, ndim=1] probabilities_state
-    cdef DTYPEf_t r
+    cdef double r
     n = number_of_initial_events
     while time < time_end and n < max_size:
         'Generate an exponential random variable with rate parameter intensity_max'
@@ -527,7 +529,7 @@ def simulate(int number_of_event_types,
     return result_times[0:n], result_events[0:n], result_states[0:n]
 
 def random_choice(np.ndarray[DTYPEf_t, ndim=1] weights):
-    cdef DTYPEf_t total, cumulative_sum, random_uniform
+    cdef double total, cumulative_sum, random_uniform
     cdef int result, dim, n, done
     dim = weights.shape[0]
     total = 0
@@ -554,7 +556,7 @@ def compute_events_residuals(np.ndarray[DTYPEf_t, ndim=1] base_rates,
                              np.ndarray[DTYPEf_t, ndim=1] times,
                              np.ndarray[DTYPEi_t, ndim=1] events,
                              np.ndarray[DTYPEi_t, ndim=1] states,
-                             DTYPEf_t time_start,
+                             double time_start,
                              np.ndarray[DTYPEf_t, ndim=3] initial_partial_sums):
     
     'Find the start index'
@@ -570,7 +572,7 @@ def compute_events_residuals(np.ndarray[DTYPEf_t, ndim=1] base_rates,
     cdef np.ndarray[DTYPEf_t, ndim=3] partial_sums_old = np.zeros((number_of_event_types, number_of_states, number_of_event_types), dtype=DTYPEf)
     cdef np.ndarray[DTYPEf_t, ndim=3] impact_decay_ratios = np.zeros((number_of_event_types, number_of_states, number_of_event_types), dtype=DTYPEf)
     cdef int e1, x, e2, n, e, event, state, i, pos
-    cdef DTYPEf_t alpha, beta, time, time_last
+    cdef double alpha, beta, time, time_last
 
     'Compute ratios alpha/beta just once'
     for e1 in range(number_of_event_types):
@@ -650,7 +652,7 @@ def compute_total_residuals(np.ndarray[DTYPEf_t, ndim=3] transition_probabilitie
                             np.ndarray[DTYPEf_t, ndim=1] times,
                             np.ndarray[DTYPEi_t, ndim=1] events,
                             np.ndarray[DTYPEi_t, ndim=1] states,
-                            DTYPEf_t time_start,
+                            double time_start,
                             np.ndarray[DTYPEf_t, ndim=3] initial_partial_sums,
                             int initial_state):
     'Find the start index'
@@ -664,7 +666,7 @@ def compute_total_residuals(np.ndarray[DTYPEf_t, ndim=3] transition_probabilitie
     cdef np.ndarray[DTYPEf_t, ndim=3] partial_sums_old = np.zeros((number_of_event_types, number_of_states, number_of_event_types), dtype=DTYPEf)
     cdef np.ndarray[DTYPEf_t, ndim=3] impact_decay_ratios = np.zeros((number_of_event_types, number_of_states, number_of_event_types), dtype=DTYPEf)
     cdef int e1, x, e2, n, e, event, state, i, pos, previous_state, x2
-    cdef DTYPEf_t alpha, beta, time, time_last, phi
+    cdef double alpha, beta, time, time_last, phi
     'Compute ratios alpha/beta just once'
     for e1 in range(number_of_event_types):
         for x in range(number_of_states):

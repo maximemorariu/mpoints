@@ -1,0 +1,9 @@
+*.so
+tutorials/
+mpoints/build/
+mpoints/__pycache__/
+tutorials/
+mpoints.yml
+doc/.ipynb_checkpoints/
+dist/
+

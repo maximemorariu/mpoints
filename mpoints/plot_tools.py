@@ -7,6 +7,7 @@ from matplotlib.colors import ListedColormap
 import copy
 import bisect
 
+
 def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q_min=0.01, q_max=0.99,
             number_of_quantiles=100, title=None, labels=None, model_labels=None, palette=None, figsize=(12, 6),
             size_labels=16, size_ticks=14, legend_size=16, bottom=0.12, top=0.93, left=0.08, right=0.92, savefig=False,
@@ -70,19 +71,21 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
     # find number of models given and number of event types (dim)
     n_models = 1
     dim = len(residuals)
-    if type(residuals[0][0]) in [list, np.ndarray]:  # case when there is more than one model
+    # case when there is more than one model
+    if type(residuals[0][0]) in [list, np.ndarray]:
         n_models = len(residuals)
         dim = len(residuals[0])
     # set empty model labels if no labels provided
-    if model_labels==None:
+    if model_labels == None:
         model_labels = [None]*n_models
     if shape is None:
         shape = (1, dim)
     v_size = shape[0]
     h_size = shape[1]
-    if palette==None:
+    if palette == None:
         palette = seaborn.color_palette('husl', n_models)
-    f, fig_array = plt.subplots(v_size, h_size, figsize=figsize, sharex='col', sharey='row')
+    f, fig_array = plt.subplots(
+        v_size, h_size, figsize=figsize, sharex='col', sharey='row')
     if title is not None:
         f.suptitle(title)
     for i in range(v_size):
@@ -98,15 +101,19 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
                     axes = fig_array[i]
                 else:
                     axes = fig_array[i, j]
-                axes.tick_params(axis='both', which='major', labelsize=size_ticks)  # font size for tick labels
+                # font size for tick labels
+                axes.tick_params(axis='both', which='major',
+                                 labelsize=size_ticks)
                 if n_models == 1:
                     quantiles_empirical = np.zeros(number_of_quantiles)
                     for k in range(number_of_quantiles):
                         q = quantile_levels[k]
                         x = np.percentile(residuals[n], q * 100)
                         quantiles_empirical[k] = x
-                    axes.plot(quantiles_theoretical, quantiles_empirical, color=palette[0])
-                    axes.plot(quantiles_theoretical, quantiles_theoretical, color='k', linewidth=0.8, ls='--')
+                    axes.plot(quantiles_theoretical,
+                              quantiles_empirical, color=palette[0])
+                    axes.plot(quantiles_theoretical, quantiles_theoretical,
+                              color='k', linewidth=0.8, ls='--')
                 else:
                     for m in range(n_models):
                         quantiles_empirical = np.zeros(number_of_quantiles)
@@ -115,31 +122,34 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
                             x = np.percentile(residuals[m][n], q * 100)
                             quantiles_empirical[k] = x
                         axes.plot(quantiles_theoretical, quantiles_empirical, color=palette[m],
-                                     label=model_labels[m])
+                                  label=model_labels[m])
                         if m == 0:
                             axes.plot(quantiles_theoretical, quantiles_theoretical, color='k', linewidth=0.8,
                                       ls='--')
-                    if n == leg_pos :  # add legend in the specified subplot
+                    if n == leg_pos:  # add legend in the specified subplot
                         legend = axes.legend(frameon=1, fontsize=legend_size)
                         legend.get_frame().set_facecolor('white')
                 if log:
                     axes.set_xscale('log')
                     axes.set_yscale('log')
                 if labels is not None:
-                    axes.set_title( labels[n], fontsize=size_labels)
+                    axes.set_title(labels[n], fontsize=size_labels)
     plt.tight_layout()
-    if bottom!=None:
+    if bottom != None:
         plt.subplots_adjust(bottom=bottom, top=top, left=left, right=right)
-    f.text(0.5, 0.02, 'Quantile (standard exponential distribution)', ha='center', fontsize=size_labels)
-    f.text(0.02, 0.5, 'Quantile (empirical)', va='center', rotation='vertical', fontsize=size_labels)
+    f.text(0.5, 0.02, 'Quantile (standard exponential distribution)',
+           ha='center', fontsize=size_labels)
+    f.text(0.02, 0.5, 'Quantile (empirical)', va='center',
+           rotation='vertical', fontsize=size_labels)
     if savefig:
         entire_path = os.path.join(path, fig_name)
         plt.savefig(entire_path)
     return f, fig_array
 
+
 def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labels=None, model_labels=None,
                 palette=None, n_lags=50, figsize=(8, 6), size_labels=16, size_ticks=14, size_legend=16, bottom=None,
-                top=None, left=None, right=None,savefig=False):
+                top=None, left=None, right=None, savefig=False):
     """
     Correlogram of residuals.
 
@@ -183,7 +193,8 @@ def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labe
     # find number of models given and number of event types (dim)
     n_models = 1
     dim = len(residuals)
-    if type(residuals[0][0]) in [list, np.ndarray]:  # case when there is more than one model
+    # case when there is more than one model
+    if type(residuals[0][0]) in [list, np.ndarray]:
         n_models = len(residuals)
         dim = len(residuals[0])
     # set empty model labels if no labels provided
@@ -193,7 +204,8 @@ def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labe
     h_size = dim
     if palette is None:
         palette = seaborn.color_palette('husl', n_models)
-    f, fig_array = plt.subplots(v_size, h_size, figsize=figsize, sharex='col', sharey='row')
+    f, fig_array = plt.subplots(
+        v_size, h_size, figsize=figsize, sharex='col', sharey='row')
     if title is not None:
         f.suptitle(title)
     for i in range(v_size):
@@ -207,7 +219,8 @@ def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labe
                 axes = fig_array[i]
             else:
                 axes = fig_array[i, j]
-            axes.tick_params(axis='both', which='major', labelsize=size_ticks)  # font size for tick labels
+            # font size for tick labels
+            axes.tick_params(axis='both', which='major', labelsize=size_ticks)
             if n_models == 1:
                 max_length = min(len(residuals[i]), len(residuals[j]))
                 ccf = stattools.ccf(np.array(residuals[i][0:max_length]),
@@ -217,26 +230,32 @@ def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labe
                 axes.set_xlim(xmin=0, xmax=n_lags)
             else:
                 for m in range(n_models):
-                    max_length = min(len(residuals[m][i]), len(residuals[m][j]))
+                    max_length = min(
+                        len(residuals[m][i]), len(residuals[m][j]))
                     ccf = stattools.ccf(np.array(residuals[m][i][0:max_length]),
-                                        np.array(residuals[m][j][0:max_length]),
+                                        np.array(
+                                            residuals[m][j][0:max_length]),
                                         unbiased=True)
-                    axes.plot(ccf[0:n_lags + 1], color=palette[m], label=model_labels[m])
+                    axes.plot(ccf[0:n_lags + 1], color=palette[m],
+                              label=model_labels[m])
                     axes.set_xlim(xmin=0, xmax=n_lags)
-                if i+j==0:  # only add legend in the first subplot
+                if i+j == 0:  # only add legend in the first subplot
                     legend = axes.legend(frameon=1, fontsize=size_legend)
                     legend.get_frame().set_facecolor('white')
             if labels is not None:
-                axes.set_title(labels[i] + r'$\rightarrow$' + labels[j], fontsize=size_labels)
+                axes.set_title(labels[i] + r'$\rightarrow$' +
+                               labels[j], fontsize=size_labels)
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-    if bottom!=None:
+    if bottom != None:
         plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top)
     f.text(0.5, 0.025, 'Lag', ha='center', fontsize=size_labels)
-    f.text(0.015, 0.5, 'Correlation', va='center', rotation='vertical', fontsize=size_labels)
+    f.text(0.015, 0.5, 'Correlation', va='center',
+           rotation='vertical', fontsize=size_labels)
     if savefig:
         entire_path = os.path.join(path, fig_name)
         plt.savefig(entire_path)
     return f, fig_array
+
 
 def transition_probabilities(probabilities, shape=None, path='', fig_name='transition_probabilities.pdf',
                              events_labels=None, states_labels=None, title=None, color_map=None, figsize=(12, 6),
@@ -287,7 +306,8 @@ def transition_probabilities(probabilities, shape=None, path='', fig_name='trans
     :return: the figure and array of figures (see matplotlib).
     """
     if color_map is None:
-        color_map = seaborn.cubehelix_palette(as_cmap=True, reverse=False, start=0.5, rot=-.75)
+        color_map = seaborn.cubehelix_palette(
+            as_cmap=True, reverse=False, start=0.5, rot=-.75)
     number_of_states = np.shape(probabilities)[0]
     number_of_event_types = np.shape(probabilities)[1]
     if shape is None:
@@ -312,9 +332,12 @@ def transition_probabilities(probabilities, shape=None, path='', fig_name='trans
                     axes = fig_array[i]
                 else:
                     axes = fig_array[i, j]
-                axes.tick_params(axis='both', which='major', labelsize=size_labels)  # font size for tick labels
+                # font size for tick labels
+                axes.tick_params(axis='both', which='major',
+                                 labelsize=size_labels)
                 # Create annotation matrix
-                annot = np.ndarray((number_of_states, number_of_states), dtype=object)
+                annot = np.ndarray(
+                    (number_of_states, number_of_states), dtype=object)
                 for x1 in range(number_of_states):
                     for x2 in range(number_of_states):
                         p = probabilities[x1, n, x2]
@@ -339,17 +362,22 @@ def transition_probabilities(probabilities, shape=None, path='', fig_name='trans
                                 cmap=color_map, fmt='s', square=True, annot_kws={'size': size_values})
                 axes.set_yticklabels(states_labels, va='center')
                 if not usetex:
-                    axes.set_title(r'$\phi_{' + events_labels[n] + '}$', fontsize=size_labels)
+                    axes.set_title(
+                        r'$\phi_{' + events_labels[n] + '}$', fontsize=size_labels)
                 else:
-                    axes.set_title(r'$\bm{\phi}_{' + events_labels[n] + '}$', fontsize=size_labels)
-    if bottom!=None:
-        plt.subplots_adjust(bottom=bottom, top=top, left=left, right=right, wspace=wspace, hspace=hspace)
+                    axes.set_title(
+                        r'$\bm{\phi}_{' + events_labels[n] + '}$', fontsize=size_labels)
+    if bottom != None:
+        plt.subplots_adjust(bottom=bottom, top=top, left=left,
+                            right=right, wspace=wspace, hspace=hspace)
     f.text(0.5, 0.02, 'Next state', ha='center', fontsize=size_labels)
-    f.text(0.02, 0.5, 'Previous state', va='center', rotation='vertical', fontsize=size_labels)
+    f.text(0.02, 0.5, 'Previous state', va='center',
+           rotation='vertical', fontsize=size_labels)
     if savefig:
         entire_path = os.path.join(path, fig_name)
         plt.savefig(entire_path)
     return f, fig_array
+
 
 def discrete_distribution(probabilities, path='', fig_name='distribution_events_states.pdf', v_labels=None,
                           h_labels=None, title=None, color_map=None, figsize=(12, 6), size_labels=16, size_values=14,
@@ -392,7 +420,8 @@ def discrete_distribution(probabilities, path='', fig_name='distribution_events_
     :return: the figure (see matplotlib).
     """
     if color_map is None:
-        color_map = seaborn.cubehelix_palette(as_cmap=True, reverse=False, start=0.5, rot=-.75)
+        color_map = seaborn.cubehelix_palette(
+            as_cmap=True, reverse=False, start=0.5, rot=-.75)
     v_size = np.shape(probabilities)[0]
     h_size = np.shape(probabilities)[1]
     # Create annotation matrix
@@ -418,8 +447,9 @@ def discrete_distribution(probabilities, path='', fig_name='distribution_events_
                     annot[x1, x2] = a + r'%'
     f = plt.figure(figsize=figsize)
     ax = seaborn.heatmap(probabilities, xticklabels=h_labels, yticklabels=v_labels, annot=annot, cbar=False,
-                    cmap=color_map, fmt='s', square=True, annot_kws={'size': size_values})
-    ax.tick_params(axis='both', which='major', labelsize=size_labels)  # font size for tick labels
+                         cmap=color_map, fmt='s', square=True, annot_kws={'size': size_values})
+    # font size for tick labels
+    ax.tick_params(axis='both', which='major', labelsize=size_labels)
     ax.set_yticklabels(v_labels, va='center')
     if title is not None:
         plt.title(title)
@@ -430,6 +460,7 @@ def discrete_distribution(probabilities, path='', fig_name='distribution_events_
         entire_path = os.path.join(path, fig_name)
         plt.savefig(entire_path)
     return f
+
 
 def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, states_labels=None, path='',
                 fig_name='kernels.pdf', title=None, palette=None, figsize=(9, 7), size_labels=16,
@@ -528,12 +559,13 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
         tt = np.linspace(t_min, t_max, num=npoints)
     norm_max = ymax
     if ymax is None:
-        norm_max = np.max(np.divide(impact_coefficients, decay_coefficients)) * 1.05
+        norm_max = np.max(np.divide(impact_coefficients,
+                          decay_coefficients)) * 1.05
     if palette is None:
         palette = seaborn.color_palette('husl', n_colors=number_of_states)
     if fig_array is None:
         fig, fig_array = plt.subplots(number_of_event_types, number_of_event_types, sharex='col', sharey='row',
-                                figsize=figsize)
+                                      figsize=figsize)
     for e1 in range(number_of_event_types):
         for e2 in range(number_of_event_types):
             axes = None
@@ -548,16 +580,19 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
                 l = None
                 if np.shape(states_labels) != ():
                     l = states_labels[x]
-                axes.plot(tt, yy, color=palette[x], label=l, alpha=alpha, ls=ls)
-            axes.tick_params(axis='both', which='major', labelsize=size_values)  # font size for tick labels
+                axes.plot(tt, yy, color=palette[x],
+                          label=l, alpha=alpha, ls=ls)
+            # font size for tick labels
+            axes.tick_params(axis='both', which='major', labelsize=size_values)
             if log_timescale:
                 axes.set_xscale('log')
             axes.set_ylim(ymin=0, ymax=norm_max)
             axes.set_xlim(xmin=t_min, xmax=t_max)
             if np.shape(events_labels) != ():
-                axes.set_title(events_labels[e1] + r' $\rightarrow$ ' + events_labels[e2], fontsize=size_labels)
+                axes.set_title(
+                    events_labels[e1] + r' $\rightarrow$ ' + events_labels[e2], fontsize=size_labels)
             pos = e2 + number_of_event_types*e1
-            if pos == legend_pos and np.shape(states_labels) != () :
+            if pos == legend_pos and np.shape(states_labels) != ():
                 legend = axes.legend(frameon=1, fontsize=size_legend)
                 legend.get_frame().set_facecolor('white')
     if title is not None:
@@ -569,6 +604,7 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
         entire_path = os.path.join(path, fig_name)
         plt.savefig(entire_path)
     return fig, fig_array
+
 
 def sample_path(times, events, states, model, time_start, time_end, color_palette=None, labelsize=16, ticksize=14,
                 legendsize=16, num=1000, s=12, savefig=False, path='', fig_name='sample_path.pdf'):
@@ -609,10 +645,12 @@ def sample_path(times, events, states, model, time_start, time_end, color_palett
     :return: the figure and array of figures (see matplotlib).
     """
     if color_palette is None:
-        color_palette = seaborn.color_palette('husl', n_colors=model.number_of_event_types)
+        color_palette = seaborn.color_palette(
+            'husl', n_colors=model.number_of_event_types)
     'Compute the intensities - this may require all the event times prior to start_time'
     compute_times = np.linspace(time_start, time_end, num=num)
-    aggregated_times, intensities = model.intensities_of_events_at_times(compute_times, times, events, states)
+    aggregated_times, intensities = model.intensities_of_events_at_times(
+        compute_times, times, events, states)
     'We can now discard the times outside the desired time period'
     index_start = bisect.bisect_left(times, time_start)
     index_end = bisect.bisect_right(times, time_end)
@@ -628,7 +666,8 @@ def sample_path(times, events, states, model, time_start, time_end, color_palett
     ax.tick_params(axis='both', which='major', labelsize=ticksize)
     # intensity_max = intensities.max() * 1.01
     for n in range(model.number_of_event_types):
-        ax.plot(aggregated_times, intensities[n], linewidth=1, color=color_palette[n], label=model.events_labels[n])
+        ax.plot(aggregated_times, intensities[n], linewidth=1,
+                color=color_palette[n], label=model.events_labels[n])
     ax.set_ylim(ymin=0)
     ax.set_ylabel('Intensity', fontsize=labelsize)
     ax.set_xlabel('Time', fontsize=labelsize)
@@ -650,7 +689,8 @@ def sample_path(times, events, states, model, time_start, time_end, color_palett
     times.insert(0, time_start)
     states.insert(0, initial_state)
     times.append(time_end)
-    states.append(states[-1])  # these two appends are required to plot until `time_end'
+    # these two appends are required to plot until `time_end'
+    states.append(states[-1])
     ax.step(times, states, where='post', linewidth=1, color='grey', zorder=1)
     # Save the figure
     plt.tight_layout()
