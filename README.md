@@ -18,8 +18,25 @@ For additional mathematical details, please consult the [documentation](https://
 The package can be easily installed via `pip`, a popular package management system for Python. In the terminal, simply enter the following command.
 
 ```
-    pip install mpoints
+pip install mpoints
 ```
 If you are using virtual environments (with conda), make sure that you install the package in the intended environment.
 
 Note: when installing `mpoints` on Windows, you may be prompted to install Visual C++ Build Tools if this is not already installed.
+
+
+## Build from source
+#### Build the wheel using `setuptools`. 
+```
+pip install -q build
+python -m build
+```
+
+
+#### Install in development mode
+If you are contributing to `mpionts`, you might want to install it in development mode.
+See [development-mode](https://setuptools.pypa.io/en/latest/userguide/quickstart.html#development-mode)
+
+```
+pip install --upgrade --force-reinstall --editable <path-to-mpoints-root>
+```
