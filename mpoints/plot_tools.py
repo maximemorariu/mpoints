@@ -1,8 +1,14 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-import seaborn
-import statsmodels.tsa.stattools as stattools
+try:
+    import seaborn
+except Exception as e:
+    print('WARNING: Could not import seaborn')
+try:
+    import statsmodels.tsa.stattools as stattools
+except Exception as e:
+    print('WARNING: Could not import statsmodels')
 from matplotlib.colors import ListedColormap
 import copy
 import bisect
