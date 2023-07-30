@@ -14,13 +14,13 @@ class HybridHawkesExpTest(unittest.TestCase):
         states_labels = [chr(48 + n) for n in range(number_of_states)]
         _phis = [np.eye(dx) + scipy.sparse.random(dx, dx,
                                                   density=.50).A for _ in range(de)]
-        _phis = [_phi / 10*np.sum(_phi, axis=1, keepdims=True)
+        _phis = [_phi / 10 * np.sum(_phi, axis=1, keepdims=True)
                  for _phi in _phis]
         _phis = [np.expand_dims(_phi, axis=1) for _phi in _phis]
         phis = np.concatenate(_phis, axis=1)
         nus = np.random.uniform(low=0., high=1., size=(de,))
         alphas = 10 * \
-            scipy.sparse.random(de, dx*de, density=.50).A.reshape(de, dx, de)
+            scipy.sparse.random(de, dx * de, density=.50).A.reshape(de, dx, de)
         betas = np.ones((de, dx, de), dtype=float)
         self.number_of_event_types = number_of_event_types
         self.number_of_states = number_of_states
