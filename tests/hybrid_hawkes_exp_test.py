@@ -122,7 +122,7 @@ class HybridHawkesExpTest(unittest.TestCase):
         guess = estimator.parameters_to_array(
             self.nus, self.alphas, self.betas)
         guess *= np.random.uniform(low=.85, high=1.15, size=guess.shape)
-        guess += np.random.uniform(low=0,  high=.001, size=guess.shape)
+        guess += np.random.uniform(low=0, high=.001, size=guess.shape)
         opt_result, initial_guess, initial_guess_kind = estimator.estimate_hawkes_parameters(
             times, events, states, time_start, time_end,
             given_guesses=[guess],
