@@ -4,11 +4,11 @@ import os
 try:
     import seaborn
 except Exception as e:
-    print('WARNING: Could not import seaborn')
+    print(f'{e}: Could not import seaborn')
 try:
     import statsmodels.tsa.stattools as stattools
 except Exception as e:
-    print('WARNING: Could not import statsmodels')
+    print(f'{e}: Could not import statsmodels')
 from matplotlib.colors import ListedColormap
 import copy
 import bisect
@@ -22,7 +22,7 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
     Qq-plot of residuals.
 
     :type residuals: list
-    :param residuals: list of lists (one list of residuals per event type) or 
+    :param residuals: list of lists (one list of residuals per event type) or
     list of lists of lists when multiple models are compared (one list of lists per model).
     :type shape: (int, int)
     :param shape: 2D-tuple (number of rows, number of columns), shape of the array of figures.
@@ -84,7 +84,7 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
         dim = len(residuals[0])
     # set empty model labels if no labels provided
     if model_labels is None:
-        model_labels = [None]*n_models
+        model_labels = [None] * n_models
     if shape is None:
         shape = (1, dim)
     v_size = shape[0]
@@ -161,7 +161,7 @@ def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labe
     Correlogram of residuals.
 
     :type residuals: list
-    :param residuals: list of lists (one list of residuals per event type) or 
+    :param residuals: list of lists (one list of residuals per event type) or
     list of lists of lists when multiple models are compared (one list of lists per model).
     :type path: string
     :param path: where the figure is saved.
@@ -234,7 +234,7 @@ def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labe
                 ccf = stattools.ccf(np.array(residuals[i][0:max_length]),
                                     np.array(residuals[j][0:max_length]),
                                     unbiased=True)
-                axes.plot(ccf[0:n_lags+1], color=palette[0])
+                axes.plot(ccf[0: n_lags + 1], color=palette[0])
                 axes.set_xlim(xmin=0, xmax=n_lags)
             else:
                 for m in range(n_models):
@@ -247,12 +247,12 @@ def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labe
                     axes.plot(ccf[0:n_lags + 1], color=palette[m],
                               label=model_labels[m])
                     axes.set_xlim(xmin=0, xmax=n_lags)
-                if i+j == 0:  # only add legend in the first subplot
+                if i + j == 0:  # only add legend in the first subplot
                     legend = axes.legend(frameon=1, fontsize=size_legend)
                     legend.get_frame().set_facecolor('white')
             if labels is not None:
-                axes.set_title(labels[i] + r'$\rightarrow$' +
-                               labels[j], fontsize=size_labels)
+                axes.set_title(labels[i] + r'$\rightarrow$' + labels[j],
+                               fontsize=size_labels)
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
     if bottom is not None:
         plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top)
@@ -329,7 +329,7 @@ def transition_probabilities(probabilities, shape=None, path='', fig_name='trans
         f.suptitle(title)
     for i in range(v_size):
         for j in range(h_size):
-            n = i*h_size + j
+            n = i * h_size + j
             if n < number_of_event_types:  # we could have more subplots than event types
                 axes = None
                 if v_size == 1 and h_size == 1:
@@ -599,7 +599,7 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
             if np.shape(events_labels) != ():
                 axes.set_title(
                     events_labels[e1] + r' $\rightarrow$ ' + events_labels[e2], fontsize=size_labels)
-            pos = e2 + number_of_event_types*e1
+            pos = e2 + number_of_event_types * e1
             if pos == legend_pos and np.shape(states_labels) != ():
                 legend = axes.legend(frameon=1, fontsize=size_legend)
                 legend.get_frame().set_facecolor('white')
@@ -664,7 +664,7 @@ def sample_path(times, events, states, model, time_start, time_end, color_palett
     index_end = bisect.bisect_right(times, time_end)
     initial_state = 0
     if index_start > 0:
-        initial_state = states[index_start-1]
+        initial_state = states[index_start - 1]
     times = list(copy.copy(times[index_start:index_end]))
     events = list(copy.copy(events[index_start:index_end]))
     states = list(copy.copy(states[index_start:index_end]))

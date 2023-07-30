@@ -347,10 +347,10 @@ class HybridHawkesExp:
                     guess_nus, guess_alphas, guess_betas = self.array_to_parameters(g, self.number_of_event_types,
                                                                                     self.number_of_states,
                                                                                     self.number_of_event_types)
-                    g_partial = self.parameters_to_array(guess_nus[e:e+1],
+                    g_partial = self.parameters_to_array(guess_nus[e:e + 1],
                                                          guess_alphas[:,
-                                                                      :, e:e+1],
-                                                         guess_betas[:, :, e:e+1])
+                                                                      :, e:e + 1],
+                                                         guess_betas[:, :, e:e + 1])
                     o = opt.minimize(likelihood_minus, g_partial, method=method,
                                      bounds=bounds, jac=gradient_of_likelihood_minus,
                                      options={'maxiter': maximum_number_of_iterations})
@@ -375,9 +375,9 @@ class HybridHawkesExp:
                 # Save optimal parameters
                 v, a, b = self.array_to_parameters(
                     o.x, self.number_of_event_types, self.number_of_states, 1)
-                opt_nus[e:e+1] = v
-                opt_alphas[:, :, e:e+1] = a
-                opt_betas[:, :, e:e+1] = b
+                opt_nus[e:e + 1] = v
+                opt_alphas[:, :, e:e + 1] = a
+                opt_betas[:, :, e: e + 1] = b
                 # Save best initial guess
                 v, a, b = self.array_to_parameters(best_initial_guess, self.number_of_event_types,
                                                    self.number_of_states, self.number_of_event_types)
@@ -839,7 +839,7 @@ class HybridHawkesExp:
         for e in range(self.number_of_event_types):
             result_intensities[e, 0] = intensities[e]
         for n in range(1, number_of_times):
-            time_increment = times_aggregated[n] - times_aggregated[n-1]
+            time_increment = times_aggregated[n] - times_aggregated[n - 1]
             event = events_aggregated[n]
             'Update partial sums: time decay effect'
             if time_increment > 0:
@@ -961,8 +961,10 @@ class HybridHawkesExp:
         number_of_states = s[1]
         number_of_event_types_2 = s[2]
         result =\
-            np.zeros(number_of_event_types_2 + 2 * number_of_event_types_1 *
-                     number_of_event_types_2 * number_of_states)
+            np.zeros(
+                number_of_event_types_2
+                + 2 * number_of_event_types_1
+                * number_of_event_types_2 * number_of_states)
         for n in range(number_of_event_types_2):
             result[n] = base_rates[n]
         for i in range(number_of_event_types_1):
