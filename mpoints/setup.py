@@ -15,7 +15,7 @@ ext_modules = [
               sources=["hybrid_hawkes_exp_cython.pyx"],
               # comment this line when compiling on Windows
               libraries=["m"],
-              extra_compile_args=["-ffast-math"]
+              extra_compile_args=["-lm -ffast-math"]
               )
 ]
 

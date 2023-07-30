@@ -4,7 +4,7 @@ import numpy
 ext_modules = [
     setuptools.Extension('mpoints.hybrid_hawkes_exp_cython',
                          sources=['mpoints/hybrid_hawkes_exp_cython.c'],
-                         extra_compile_args=["-ffast-math"],
+                         extra_compile_args=["-lm -ffast-math"],
                          )
 ]
 
