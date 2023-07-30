@@ -12,16 +12,17 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 
+from unittest.mock import MagicMock
 import os
 import sys
 sys.path.insert(0, os.path.abspath('../'))
 
-from unittest.mock import MagicMock
 
 class Mock(MagicMock):
     @classmethod
     def __getattr__(cls, name):
         return MagicMock()
+
 
 MOCK_MODULES = ['numpy', 'scipy', 'scipy.optimize', 'mpoints.hybrid_hawkes_exp_cython',
                 'matplotlib', 'matplotlib.pyplot', 'seaborn', 'statsmodels', 'statsmodels.tsa',

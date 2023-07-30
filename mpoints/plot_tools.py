@@ -22,7 +22,8 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
     Qq-plot of residuals.
 
     :type residuals: list
-    :param residuals: list of lists (one list of residuals per event type) or list of lists of lists when multiple models are compared (one list of lists per model).
+    :param residuals: list of lists (one list of residuals per event type) or 
+    list of lists of lists when multiple models are compared (one list of lists per model).
     :type shape: (int, int)
     :param shape: 2D-tuple (number of rows, number of columns), shape of the array of figures.
     :type path: string
@@ -160,7 +161,8 @@ def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labe
     Correlogram of residuals.
 
     :type residuals: list
-    :param residuals: list of lists (one list of residuals per event type) or list of lists of lists when multiple models are compared (one list of lists per model).
+    :param residuals: list of lists (one list of residuals per event type) or 
+    list of lists of lists when multiple models are compared (one list of lists per model).
     :type path: string
     :param path: where the figure is saved.
     :type fig_name: string
