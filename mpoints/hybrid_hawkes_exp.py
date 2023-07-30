@@ -906,7 +906,7 @@ class HybridHawkesExp:
                          :] += np.exp(- self.decay_coefficients[event, state, :] * (time_end - time))
         partial_sums = np.multiply(partial_sums, self.impact_coefficients)
         'Add contribution of the given initial condition'
-        if np.shape(initial_partial_sums) != () and time_initial_condition != None:
+        if np.shape(initial_partial_sums) != () and time_initial_condition is not None:
             partial_sums += np.multiply(np.exp(- self.decay_coefficients * (time_end - time_initial_condition)),
                                         initial_partial_sums)
         return partial_sums
@@ -1119,8 +1119,8 @@ class HybridHawkesExp:
         """
         labels = []
         for e in range(self.number_of_event_types):
-            l = r'$\nu_{' + self.events_labels[e] + '}$'
-            labels.append(l)
+            label = r'$\nu_{' + self.events_labels[e] + '}$'
+            labels.append(label)
         return labels
 
     def generate_impact_coefficients_labels(self):

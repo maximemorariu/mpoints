@@ -82,13 +82,13 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
         n_models = len(residuals)
         dim = len(residuals[0])
     # set empty model labels if no labels provided
-    if model_labels == None:
+    if model_labels is None:
         model_labels = [None]*n_models
     if shape is None:
         shape = (1, dim)
     v_size = shape[0]
     h_size = shape[1]
-    if palette == None:
+    if palette is None:
         palette = seaborn.color_palette('husl', n_models)
     f, fig_array = plt.subplots(
         v_size, h_size, figsize=figsize, sharex='col', sharey='row')
@@ -141,7 +141,7 @@ def qq_plot(residuals, shape=None, path='', fig_name='qq_plot.pdf', log=False, q
                 if labels is not None:
                     axes.set_title(labels[n], fontsize=size_labels)
     plt.tight_layout()
-    if bottom != None:
+    if bottom is not None:
         plt.subplots_adjust(bottom=bottom, top=top, left=left, right=right)
     f.text(0.5, 0.02, 'Quantile (standard exponential distribution)',
            ha='center', fontsize=size_labels)
@@ -252,7 +252,7 @@ def correlogram(residuals, path='', fig_name='correlogram.pdf', title=None, labe
                 axes.set_title(labels[i] + r'$\rightarrow$' +
                                labels[j], fontsize=size_labels)
     plt.tight_layout(rect=[0, 0.03, 1, 0.95])
-    if bottom != None:
+    if bottom is not None:
         plt.subplots_adjust(left=left, right=right, bottom=bottom, top=top)
     f.text(0.5, 0.025, 'Lag', ha='center', fontsize=size_labels)
     f.text(0.015, 0.5, 'Correlation', va='center',
@@ -373,7 +373,7 @@ def transition_probabilities(probabilities, shape=None, path='', fig_name='trans
                 else:
                     axes.set_title(
                         r'$\bm{\phi}_{' + events_labels[n] + '}$', fontsize=size_labels)
-    if bottom != None:
+    if bottom is not None:
         plt.subplots_adjust(bottom=bottom, top=top, left=left,
                             right=right, wspace=wspace, hspace=hspace)
     f.text(0.5, 0.02, 'Next state', ha='center', fontsize=size_labels)
@@ -583,11 +583,11 @@ def kernels_exp(impact_coefficients, decay_coefficients, events_labels=None, sta
                 a = impact_coefficients[e1, x, e2]
                 b = decay_coefficients[e1, x, e2]
                 yy = a / b * (1 - np.exp(-b * tt))
-                l = None
+                label = None
                 if np.shape(states_labels) != ():
-                    l = states_labels[x]
+                    label = states_labels[x]
                 axes.plot(tt, yy, color=palette[x],
-                          label=l, alpha=alpha, ls=ls)
+                          label=label, alpha=alpha, ls=ls)
             # font size for tick labels
             axes.tick_params(axis='both', which='major', labelsize=size_values)
             if log_timescale:
