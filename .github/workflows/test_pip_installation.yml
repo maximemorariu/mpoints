@@ -19,4 +19,18 @@ jobs:
       - name: Test installation
         run: |
           python -c "import mpoints;"
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: recursive
+      - name: extract tests
+        run: |
+          cd ..
+          mkdir repo
+          mv mpoints ./repo/
+          cp -r repo/mpoints/tests ./
+      - name: Test with pytest
+        run: |
+          pip install pytest
+          pytest tests/*_test.py
 
