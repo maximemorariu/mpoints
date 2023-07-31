@@ -1,6 +1,8 @@
 name: Test pip installation
 
-on: [push]
+on:
+  release:
+    types: [created, published]
 
 jobs: 
   build-linux:
