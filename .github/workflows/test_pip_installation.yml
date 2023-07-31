@@ -1,0 +1,40 @@
+name: Test pip installation
+
+on: [push]
+
+jobs: 
+  build-linux:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 5
+
+    steps:
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v3
+        with:
+          python-version: '3.9'
+      - name: Install mpoints via pip
+        run: |
+          pip install mpoints
+      - name: Test installation
+        run: |
+          python -c "import mpoints;"
+      - name: Checkout tests
+        uses: actions/checkout@v3
+        with:
+          sparse-checkout: |
+            tests
+      - name: extract tests
+        run: |
+          echo "PWD:"
+          echo $PWD
+          echo "-----------------------------"
+          echo "ls"
+          ls
+          echo "-----------------------------"
+      - name: Test with pytest
+        run: |
+          echo $PWD
+          pip install pytest
+          pytest tests/*_test.py
+
