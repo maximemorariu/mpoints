@@ -43,11 +43,13 @@ jobs:
           echo "ls repo"
           ls repo
           echo "-----------------------------"
-          echo "ls mpoints"
-          ls mpoints
+          echo "ls repo/mpoints"
+          ls repo/mpoints
           echo "-----------------------------"
           cp -r repo/mpoints/tests ./
+          echo "ls"
           ls
+          echo "-----------------------------"
           ls tests
       - name: Test with pytest
         run: |
