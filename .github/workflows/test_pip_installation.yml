@@ -16,7 +16,7 @@ jobs:
       - name: Install mpoints via pip
         run: |
           pip install mpoints
-      - name: Test installation:
+      - name: Test installation
         run: |
           python -c "import mpoints;"
 
