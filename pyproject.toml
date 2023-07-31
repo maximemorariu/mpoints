@@ -5,8 +5,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mpoints"
-version = "0.2.0"
+version = "1.0.0"
 description = "Calibration and simulation of state-dependent Hawkes processes."
+readme = "README.md"
 authors = [
 {name="Maxime Morariu-Patrichi", email="maximemorariu@me.com"},
 {name="Claudio Bellani", email="claudio.bellani01@gmail.com"}]
