@@ -25,13 +25,27 @@ jobs:
           submodules: recursive
       - name: extract tests
         run: |
+          echo "PWD:"
           echo $PWD
+          echo "-----------------------------"
           cd ../..
+          echo "PWD:"
           echo $PWD
+          echo "-----------------------------"
           mkdir repo
+          echo "ls"
           ls
+          echo "-----------------------------"
           mv mpoints ./repo/
+          echo "ls"
           ls
+          echo "-----------------------------"
+          echo "ls repo"
+          ls repo
+          echo "-----------------------------"
+          echo "ls mpoints"
+          ls mpoints
+          echo "-----------------------------"
           cp -r repo/mpoints/tests ./
           ls
           ls tests
