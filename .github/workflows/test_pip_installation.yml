@@ -19,38 +19,19 @@ jobs:
       - name: Test installation
         run: |
           python -c "import mpoints;"
-      - name: Checkout repository
+      - name: Checkout tests
         uses: actions/checkout@v3
         with:
-          submodules: recursive
+          sparse-checkout: |
+            tests
       - name: extract tests
         run: |
           echo "PWD:"
           echo $PWD
           echo "-----------------------------"
-          cd ../..
-          echo "PWD:"
-          echo $PWD
-          echo "-----------------------------"
-          mkdir repo
           echo "ls"
           ls
           echo "-----------------------------"
-          mv mpoints ./repo/
-          echo "ls"
-          ls
-          echo "-----------------------------"
-          echo "ls repo"
-          ls repo
-          echo "-----------------------------"
-          echo "ls repo/mpoints"
-          ls repo/mpoints
-          echo "-----------------------------"
-          cp -r repo/mpoints/tests ./
-          echo "ls"
-          ls
-          echo "-----------------------------"
-          ls tests
       - name: Test with pytest
         run: |
           echo $PWD
