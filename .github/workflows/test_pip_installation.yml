@@ -26,14 +26,18 @@ jobs:
       - name: extract tests
         run: |
           echo $PWD
-          cd ..
+          cd ../..
           echo $PWD
           mkdir repo
           ls
           mv mpoints ./repo/
+          ls
           cp -r repo/mpoints/tests ./
+          ls
+          ls tests
       - name: Test with pytest
         run: |
+          echo $PWD
           pip install pytest
           pytest tests/*_test.py
 
